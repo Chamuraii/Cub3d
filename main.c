@@ -6,11 +6,13 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/08/28 16:21:37 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/08/29 19:00:43 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
+
+void	sky_floor(t_all *all);
 
 void	ft_exit(char *reason, int status)
 {
@@ -25,27 +27,62 @@ void	texture_load(t_all *all, char *text)
 	all->texture = mlx_load_png(text);
 }
 
-void	ray_cast(t_all *all)
+void	every_ray(t_all *all)
 {
-	int	dx;
-	int	dy;
+	double	x;
+	double	y;
+	double	rad;
+	double	mrad;
 
-	dx = 0;
-	dy = 0;
-/* 	printf ("x = %d\n", all->x);
-	while ((all->x + dx) % 10 != 0)
+	rad = all->lz;
+	mrad = all->hz - 1;
+	printf("an (%f, %f)\n", rad, mrad);
+	x = all->x;
+	y = all->y + 1;
+	while (rad < mrad)
 	{
-		printf ("dx = %d\n", dx);
-		dx ++;
+		if (cos(rad * PI / 180) == 0)
+			rad ++;
+		y = ceil(y);
+		x += cos(rad * PI / 180) / sin(rad * PI / 180);
+		//printf("checking (%f , %f)\n", floor(x), y);
+		//if (all->map[floor(x)][y] == 1)
+		//	break ;
+		x = ceil(x);
+		y += sin(rad * PI / 180) / cos(rad * PI / 180);
+		//printf("checkingg (%f, %f)\n", x, floor(y));
+		//if (all->map[x][floor(y)] == 1)
+		//	break ;
+		rad ++;
 	}
-	while ((all->y + dy) % 10 != 0)
-	{
-		printf ("dy = %d\n", dy);
-		dy ++;
-	}
-	printf ("il manque %d, %d\n", dx, dy); */
+}
 
-	//while tab[x ++][y ++] != 1 && < map limits
+void	center_ray(t_all *all)
+{
+	int		i;
+	int		y;
+	double	dist;
+	int		pix;
+	int		end;
+
+	y = fabs(all->y);
+	dist = ceil(y) - y;
+	y = ceil(y);
+	//while (all->map[floor(x)][ceil(y)] != 1)
+	while (y < 4)
+		y ++;
+	dist += y;
+	pix = 100 - (dist - 1) * 10;
+	printf ("pix = %d\n", pix);
+	i = pix * 14;
+	end = (100 - pix) * 14;
+	printf ("i = %d\n", i);
+	printf ("end = %d\n", end);
+	while (i < end && i >= 0)
+	{
+		mlx_put_pixel(all->background, 1300, i, 0x0000ff);
+		i ++;
+	}
 }
 
 void	camera_turn(t_all *all, int i)
@@ -75,7 +112,14 @@ void	camera_turn(t_all *all, int i)
 	while (all->lz >= 360)
 		all->lz -= 360;
 	printf ("(%d) -> %d to %d visible\n", all->z, all->hz, all->lz);
-	//ray_cast(all);
+}
+
+void	ray(t_all *all)
+{
+	sky_floor(all);
+	printf ("calling center\n");
+	center_ray(all);
+	//every_ray(all);
 }
 
 void	press_keys(mlx_key_data_t keydata, t_all *all)
@@ -83,31 +127,45 @@ void	press_keys(mlx_key_data_t keydata, t_all *all)
 	if (mlx_is_key_down(all->mlx, MLX_KEY_D))
 	{
 		printf ("going right\n");
-		all->x ++;
-		printf ("(%d, %d)\n", all->x, all->y);
+		all->x += cos((all->z - 90) * PI / 180);
+		all->y += sin((all->z - 90) * PI / 180);
+		printf ("(%f, %f)\n", all->x, all->y);
+		ray(all);
 	}
 	else if (mlx_is_key_down(all->mlx, MLX_KEY_S))
 	{
 		printf ("going down\n");
-		all->y --;
-		printf ("(%d, %d)\n", all->x, all->y);
+		all->x -= cos(all->z * PI / 180);
+		all->y -= sin(all->z * PI / 180);
+		printf ("(%f, %f)\n", all->x, all->y);
+		ray(all);
 	}
 	else if (mlx_is_key_down(all->mlx, MLX_KEY_W))
 	{
 		printf ("going up\n");
-		all->y ++;
-		printf ("(%d, %d)\n", all->x, all->y);
+		all->x += cos(all->z * PI / 180);
+		all->y += sin(all->z * PI / 180);
+		printf ("(%f, %f)\n", all->x, all->y);
+		ray(all);
 	}
 	else if (mlx_is_key_down(all->mlx, MLX_KEY_A))
 	{
 		printf ("going left\n");
-		all->x --;
-		printf ("(%d, %d)\n", all->x, all->y);
+		all->x += cos((all->z + 90) * PI / 180);
+		all->y += sin((all->z + 90) * PI / 180);
+		printf ("(%f, %f)\n", all->x, all->y);
+		ray(all);
 	}
 	else if (mlx_is_key_down(all->mlx, MLX_KEY_RIGHT))
+	{
 		camera_turn(all, 1);
+		ray(all);
+	}
 	else if (mlx_is_key_down(all->mlx, MLX_KEY_LEFT))
+	{
 		camera_turn(all, 2);
+		ray(all);
+	}
 }
 
 void	my_hook(mlx_key_data_t keydata, void *param)
