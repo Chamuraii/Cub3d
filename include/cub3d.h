@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:25:42 by jchamak           #+#    #+#             */
-/*   Updated: 2023/08/29 14:17:25 by jorgfern         ###   ########.fr       */
+/*   Updated: 2023/08/30 12:53:54 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ typedef struct s_all
 	mlx_image_t		*g_img;
 	mlx_image_t		*background;
 	mlx_texture_t	*texture;
-	int				x;
-	int				y;
+	double			x;
+	double			y;
 	int				z;
 	int				hz;
 	int				lz;
