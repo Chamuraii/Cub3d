@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_tolower.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/22 14:45:51 by jchamak           #+#    #+#             */
-/*   Updated: 2022/10/01 20:08:55 by jchamak          ###   ########.fr       */
+/*   Created: 2023/04/25 18:05:51 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/04/25 18:05:51 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,6 @@
 int	ft_tolower(int c)
 {
 	if (c >= 'A' && c <= 'Z')
-		c = c + 32;
+		c += 32;
 	return (c);
 }
-
-/* int main()
-{
-	char c = 'I';
-	ft_tolower(c);
-	return 0;
-}
- */

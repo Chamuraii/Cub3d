@@ -3,61 +3,58 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/12 15:36:35 by jchamak           #+#    #+#             */
-/*   Updated: 2022/10/12 15:37:48 by jchamak          ###   ########.fr       */
+/*   Created: 2023/04/25 18:05:15 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/04/26 16:06:49 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static int	ft_digit_count(long int nb)
+unsigned int	ft_digit_count(long nb)
 {
-	int	count;
+	unsigned int	count;
 
 	count = 0;
-	if (nb == 0)
+	if (!nb)
 		count = 1;
-	else
+	if (nb < 0)
 	{
-		if (nb < 0)
-		{
-			nb *= -1;
-			count++;
-		}
-		while (nb > 0)
-		{
-			nb /= 10;
-			count++;
-		}
+		nb = -nb;
+		count++;
+	}
+	while (nb > 0)
+	{
+		nb /= 10;
+		count++;
 	}
 	return (count);
 }
 
-char	*ft_itoa(int n)
+char	*ft_itoa(int nb)
 {
-	char		*str;
-	int			i;
-	long int	nb;
+	unsigned int	i;
+	long			num;
+	char			*str;
 
-	nb = n;
-	i = ft_digit_count(nb);
-	str = malloc(i * sizeof(char) + 1);
-	if (!(str))
+	num = nb;
+	str = (char *)malloc((ft_digit_count(num) + 1) * sizeof(char));
+	if (!str)
 		return (0);
-	str[i--] = 0;
-	if (nb == 0)
+	str[ft_digit_count(num)] = '\0';
+	if (num == 0)
 		str[0] = '0';
-	if (nb < 0)
+	i = ft_digit_count(num) - 1;
+	if (num < 0)
 	{
+		num = -num;
 		str[0] = '-';
-		nb *= -1;
 	}
-	while (nb > 0)
+	while (num > 0)
 	{
-		str[i--] = nb % 10 + '0';
-		nb /= 10;
+		str[i--] = (num % 10) + 48;
+		num /= 10;
 	}
 	return (str);
 }

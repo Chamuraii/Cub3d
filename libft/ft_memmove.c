@@ -3,59 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/22 13:42:04 by jchamak           #+#    #+#             */
-/*   Updated: 2022/10/15 15:33:25 by jchamak          ###   ########.fr       */
+/*   Created: 2023/04/25 18:05:31 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/04/25 20:09:17 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static void	nul(char *a, char *b, size_t size)
+void	*ft_memmove(void *dst, const void *src, size_t n)
 {
-	size_t	i;
+	char			*src2;
+	char			*dst2;
 
-	i = 0;
-	while (i < size)
-	{
-		a[i] = b[i];
-		i ++;
-	}
-}
-
-void	*ft_memmove(void *str, const void *str2, size_t size)
-{
-	size_t	i;
-	char	*a;
-	char	*b;
-
-	a = (char *)str;
-	b = (char *)str2;
-	if (!str && !str2)
+	src2 = (char *)src;
+	dst2 = (char *)dst;
+	if (!dst2 && !src2)
 		return (0);
-	i = size;
-	if (a > b)
+	if (src2 < dst2)
 	{
-		while (i > 0)
-		{
-			a[i - 1] = b[i - 1];
-			i --;
-		}
+		while (n--)
+			dst2[n] = src2[n];
 	}
 	else
-	{
-		nul(str, (char *)str2, size);
-	}
-	return (str);
+		ft_memcpy(dst2, src2, n);
+	return (dst2);
 }
-
-/*  int main()
-{
-	char str[] = "mipmip";
-	char str2[] = "bonbon";
-	ft_memmove(str, str2, 5);
-	printf("%s", str);
-	return 0;
-} 
-  */

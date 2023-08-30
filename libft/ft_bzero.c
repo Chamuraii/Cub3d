@@ -3,31 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/22 13:05:45 by jchamak           #+#    #+#             */
-/*   Updated: 2022/10/01 20:07:13 by jchamak          ###   ########.fr       */
+/*   Created: 2023/04/25 18:05:05 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/04/25 18:11:28 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	ft_bzero(char *str, int size)
+void	ft_bzero(void *str, size_t n)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
-	while (i < size)
+	while (i < n)
 	{
-		str[i] = '\0';
-		i ++;
+		((char *)str)[i] = 0;
+		i++;
 	}
 }
-
-/* int main()
-{
-	char str[] = "mipmip";
-	ft_bzero(str, 6);
-	return 0;
-} 
- */

@@ -3,41 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/26 12:38:18 by jchamak           #+#    #+#             */
-/*   Updated: 2022/10/01 20:08:35 by jchamak          ###   ########.fr       */
+/*   Created: 2023/04/25 18:05:40 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/04/25 18:05:40 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-size_t	ft_strlcpy(char *str, const char *str2, size_t size)
+size_t	ft_strlcpy(char *dest, const char *src, size_t size)
 {
-	size_t	i;
+	unsigned int	i;
+	size_t			src_len;
 
+	src_len = ft_strlen(src);
 	i = 0;
-	if (size > 0)
+	if (size != 0)
 	{
-		while ((i < size -1) && (str2[i] != '\0'))
+		while (src[i] != '\0' && i < size - 1)
 		{
-			str[i] = str2[i];
-			i ++;
+			dest[i] = src[i];
+			i++;
 		}
-		str[i] = 0;
+		dest[i] = '\0';
 	}
-	while (str2[i])
-		i ++;
-	return (i);
+	return (src_len);
 }
-
-/* int main()
-{
-	char str[] = "rioe";
-	char str2[] = "mememe";
-	size_t euh = ft_strlcpy(str, str2, 5);
-	printf("%zu",euh);
-	size_t euh2 = strlcpy(str, str2, 5);
-	printf("%zu",euh2);
-	return 0;
-} */

@@ -3,31 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/23 10:34:10 by jchamak           #+#    #+#             */
-/*   Updated: 2022/10/01 21:37:38 by jchamak          ###   ########.fr       */
+/*   Created: 2023/04/25 18:05:48 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/04/25 20:53:32 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strrchr(const char *str, int ch)
+char	*ft_strrchr(const char *str, int c)
 {
-	int		i;
-	char	*r;
+	size_t	i;
+	char	*ptr;
 
-	r = 0;
-	i = 0;
-	while (str[i])
+	i = -1;
+	ptr = 0;
+	while (str[++i])
 	{
-		if (str[i] == (char)ch)
-			r = &((char *)str)[i];
-		i++;
+		if (str[i] == (char)c)
+			ptr = &((char *)str)[i];
 	}
-	if (str[i] == (char)ch)
-		r = &((char *)str)[i];
-	if (ch == '\0')
-		r = &((char *)str)[i];
-	return (r);
+	if (str[i] == (char)c)
+		ptr = &((char *)str)[i];
+	if (!c)
+		ptr = &((char *)str)[i];
+	return (ptr);
 }

@@ -3,49 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strnstr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/27 09:49:51 by jchamak           #+#    #+#             */
-/*   Updated: 2022/10/15 18:15:21 by jchamak          ###   ########.fr       */
+/*   Created: 2023/04/25 18:05:47 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/04/26 15:12:21 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strnstr(char *str, char *to_find, size_t n)
+char	*ft_strnstr(const char *s1, const char *s2, size_t n)
 {
-	size_t	i;
-	size_t	j;
+	size_t	s2_len;
 
-	i = 0;
-	while (to_find[i] || !to_find || !str)
-		i ++;
-	if (i > n)
-		return (NULL);
-	i = 0;
-	j = 0;
-	if (to_find[j] == '\0')
-		return (str);
-	while ((str[i] != '\0') && (i < n))
+	if (!(*s2) || s1 == s2)
+		return ((char *)s1);
+	s2_len = ft_strlen(s2);
+	while (*s1 && s2_len <= n)
 	{
-		while (str[i + j] == to_find[j] && str[i + j] != '\0' && (i + j) < n)
-			j++;
-		if (to_find[j] == '\0' && i < n)
-		{
-			return ((char *)str + i);
-		}
-		i++;
-		j = 0;
+		if (!(ft_strncmp((char *)s1, (char *)s2, s2_len)))
+			return ((char *)s1);
+		s1++;
+		n--;
 	}
-	return (NULL);
+	return (0);
 }
-
-/* int main()
-{
-	char str[12] = "yyyhkj.com";
-	char ch = 'hkj';
-	char a = *ft_strnstr(str, ch, 5);
-	printf ("%d", a);
-	return 0;
-}  
-  */

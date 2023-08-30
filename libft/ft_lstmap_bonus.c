@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstmap_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/16 16:39:55 by jchamak           #+#    #+#             */
-/*   Updated: 2022/10/16 18:51:52 by jchamak          ###   ########.fr       */
+/*   Created: 2023/04/28 20:02:32 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/04/28 20:45:21 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,28 @@
 
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
 {
-	t_list	*new;
-	t_list	*aux;
+	t_list	*node;
+	t_list	*first_node;
 
 	if (!lst)
-		return (NULL);
-	new = NULL;
-	while (lst)
+		return (0);
+	first_node = (t_list *)malloc(sizeof(t_list));
+	if (!first_node)
+		return (0);
+	first_node->content = f(lst -> content);
+	node = first_node;
+	while (lst->next)
 	{
-		aux = ft_lstnew(f(lst->content));
-		if (aux == NULL)
+		lst = lst -> next;
+		node -> next = (t_list *)malloc(sizeof(t_list));
+		if (!node->next)
 		{
-			ft_lstclear(&new, del);
-			return (NULL);
+			ft_lstclear(&first_node, del);
+			return (0);
 		}
-		ft_lstadd_back(&new, aux);
-		lst = lst->next;
+		node = node -> next;
+		node -> content = f(lst -> content);
 	}
-	return (new);
+	node -> next = 0;
+	return (first_node);
 }

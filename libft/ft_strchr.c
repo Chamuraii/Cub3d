@@ -3,38 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/22 14:54:32 by jchamak           #+#    #+#             */
-/*   Updated: 2022/10/01 20:08:15 by jchamak          ###   ########.fr       */
+/*   Created: 2023/04/25 18:05:36 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/04/25 22:10:51 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strchr(const char *str, int ch)
+char	*ft_strchr(const char *str, int c)
 {
-	int	i;
+	size_t	i;
 
-	i = 0;
-	while (str[i])
+	i = -1;
+	while (str[++i])
 	{
-		if (str[i] == (char)ch)
-			return ((char *)(str + i));
-		i ++;
+		if (str[i] == (char)c)
+			return ((char *)&str[i]);
 	}
-	if (str[i] == (char)ch)
-		return ((char *)(str + i));
+	if (str[i] == (char)c)
+		return ((char *)&str[i]);
 	return (0);
 }
-
-/* 
-int	main()
-{
-	char str[12] = "yyyhkj.com";
-	char ch = 'h';
-	char a = *ft_strchr(str, ch);
-	printf ("%d", a);
-	return 0;
-}
-*/

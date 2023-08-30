@@ -3,10 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   ft_substr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/30 13:49:16 by jchamak           #+#    #+#             */
-/*   Updated: 2022/10/02 17:20:42 by jchamak          ###   ########.fr       */
+/*   Created: 2023/08/28 19:04:41 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/08/30 02:01:18 by jorgfern         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_substr.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jorgfern <jorgfern@student.42malaga.com    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/04/25 18:05:50 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/04/26 19:24:58 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,34 +26,23 @@
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-	char	*tab;
 	size_t	i;
-	size_t	t;
+	char	*str;
 
 	i = 0;
-	t = ft_strlen(s);
-	if (t == 0 || start >= (unsigned int)t)
+	if (((size_t)start) > ((size_t)ft_strlen(s)))
 		return (ft_strdup(""));
-	if (len > t)
-		tab = (char *) malloc((t + 1) * sizeof(char));
-	else
-		tab = (char *) malloc((len + 1) * sizeof(char));
-	if (!tab)
-		return (NULL);
-	while (i < len && s[start + i])
+	if (((size_t)start) + len > ((size_t)ft_strlen(s)))
+		len = ft_strlen(s) - start;
+	str = (char *)malloc((len + 1) * sizeof(char));
+	if (!str)
+		return (0);
+	while (i < len && s[start])
 	{
-		tab[i] = s[start + i];
-		i ++;
+		str[i] = s[start];
+		i++;
+		start++;
 	}
-	tab[i] = '\0';
-	return (tab);
+	str[i] = 0;
+	return (str);
 }
-
-/* int main()
-{
-	char s[] = "1234567890"; 
-	unsigned int start = 56;
-	size_t len = 3;
-	printf("%s \n",ft_substr(s, start, len));
-	return(0);
-}  */

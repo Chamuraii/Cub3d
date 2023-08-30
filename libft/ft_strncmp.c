@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strncmp.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/23 10:38:48 by jchamak           #+#    #+#             */
-/*   Updated: 2022/10/01 20:08:42 by jchamak          ###   ########.fr       */
+/*   Created: 2023/04/25 18:05:46 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/04/25 21:12:20 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,20 @@
 
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	unsigned char	*ss1;
-	unsigned char	*ss2;
-	size_t			c1;
-	size_t			c2;
+	size_t	i;
 
-	ss1 = (unsigned char *)s1;
-	ss2 = (unsigned char *)s2;
-	c1 = 0;
-	c2 = 0;
-	if (n == 0)
-		return (c2);
-	while ((ss1[c1] == ss2[c1] && ss1[c1] != '\0') && c1 < n)
-		c1++;
-	if (c1 == n)
-		c1--;
-	c2 = ss1[c1] - ss2[c1];
-	return (c2);
+	i = 0;
+	while ((s1[i] || s2[i]) && i < n)
+	{
+		if ((unsigned char)(s1[i]) == (unsigned char)(s2[i]))
+			i++;
+		else
+		{
+			if ((unsigned char)(s1[i]) < (unsigned char)(s2[i]))
+				return (-1);
+			if ((unsigned char)(s1[i]) > (unsigned char)(s2[i]))
+				return (1);
+		}
+	}
+	return (0);
 }

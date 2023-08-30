@@ -3,31 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/23 10:45:39 by jchamak           #+#    #+#             */
-/*   Updated: 2022/09/23 16:58:43 by jchamak          ###   ########.fr       */
+/*   Created: 2023/04/25 18:05:29 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/05/10 17:53:48 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	*ft_memchr(const void *str, int c, size_t n)
+void	*ft_memchr(const void *s, int c, size_t n)
 {
-	while (n--)
+	unsigned int	i;
+	char			*s2;
+	char			c2;
+
+	s2 = (char *)s;
+	c2 = (char)c;
+	i = -1;
+	while (++i < n)
 	{
-		if (*(unsigned char *) str == (unsigned char)c)
-			return ((void *) str);
-		str++;
+		if (*s2 == c2)
+			return (s2);
+		s2++;
 	}
 	return (0);
 }
-
-/* int main()
-{
-	char str[12] = "yyyhkj.com";
-	int  ch = 'h';
-	printf(" %p \n",ft_memchr(str, ch, 5));
-	return 0;
-}
-  */

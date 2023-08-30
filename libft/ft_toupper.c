@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_toupper.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/22 14:29:41 by jchamak           #+#    #+#             */
-/*   Updated: 2022/10/01 20:08:57 by jchamak          ###   ########.fr       */
+/*   Created: 2023/04/25 18:05:55 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/04/25 18:05:55 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,6 @@
 int	ft_toupper(int c)
 {
 	if (c >= 'a' && c <= 'z')
-		c = c - 32;
+		c -= 32;
 	return (c);
 }
-
-/* int main()
-{
-	char c = 'I';
-	ft_toupper(c);
-	return 0;
-}
- */

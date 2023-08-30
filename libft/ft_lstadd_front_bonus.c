@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstadd_front_bonus.c                            :+:      :+:    :+:   */
+/*   ft_lstadd_front.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/15 16:29:46 by jchamak           #+#    #+#             */
-/*   Updated: 2022/10/15 17:35:18 by jchamak          ###   ########.fr       */
+/*   Created: 2023/04/25 18:05:17 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/04/25 18:30:54 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 void	ft_lstadd_front(t_list **lst, t_list *new)
 {
-	if (new)
-	{
-		new -> next = *lst;
-		*lst = new;
-	}
+	new->next = *lst;
+	*lst = new;
 }
