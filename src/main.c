@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/08/31 13:33:20 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/08/31 16:53:03 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,20 +35,21 @@ void	draw_pixel_line(t_all *all, double dist, double rad)
 	int		i;
 	double	pos;
 
-	pix = 100 - (dist - 1) * 10;
-	end = pix * 10;
-	i = (100 - pix) * 10;
+	pix = 100 - (dist - 2) * 10;
+	end = pix * 8;
+	i = 1000 - end;
 	pos = ((135 + rad) / 90) * 800;
+	rad += 45;
 	printf("rad = %f, pos = %f\n", rad, pos);
-	printf ("drawing a line from %d to %d, for %f m at %f degres (x = %f)\n", i, end, dist, rad, 800 / rad + 1600);
-	while (i < end && i >= 0 && rad >= -45 && rad <= 45)
+	printf ("drawing a line from %d to %d, for %f m at %f degres (x = %f)\n", i, end, dist, rad, - rad / 45 * 1600 + 1600);
+	while (i < end && i >= 0 && rad >= 0 && rad <= 90)
 	{
 		if (rad == 0)
 			mlx_put_pixel(all->background, 800, i, 0x0000ff);
-		else if (rad > 0)
-			mlx_put_pixel(all->background, rad / 45 * 800, i, 0x0000ff);
-		else if (rad < 0)
-			mlx_put_pixel(all->background, -rad / 45 * 800 + 800, i, 0x0000ff);
+		else if (rad >= 45)
+			mlx_put_pixel(all->background, rad / 45 * 1600 + 1600, i, 0x0000ff);
+		else if (rad < 45)
+			mlx_put_pixel(all->background, -rad / 45 * 1600 + 1600, i, 0x0000ff);
 		i ++;
 	}
 }
@@ -66,33 +67,35 @@ void	every_ray(t_all *all)
 	printf("an (%f, %f)\n", rad, mrad);
 	a = fabs(cos(rad * PI / 180)) / fabs(sin(rad * PI / 180));
 	x = all->x;
+	printf("----x = %f, a = %f\n", x, a);
 	//printf("checking (%f , %f)\n", floor(x), floor(y));
 	center_ray(all);
-	while (rad < mrad && x + a < 11 && x / a < 11 && x > 0 && x / a > 0)
+	x += a;
+	while (x < 10 && floor(x / a) < 10 && x > 0 && x / a > 0)
 	{
-		x += a;
-	//	printf("will seg %f, %f %f at (%d, %d)\n", rad, x, a, (int)floor(x / a), (int)floor(x));
+		a = fabs(cos(rad * PI / 180)) / fabs(sin(rad * PI / 180));
+		//x += a;
 		printf("checkingg (%f, %f)\n", floor(x), floor(x / a));
-		if (all->map[(int)floor(x / a)][(int)floor(x)] == 1)
+		if (all->map[(int)floor(x / a)][(int)floor(x)] == 1 && x + a < 10 && x / a < 10 && x > 0 && x / a > 0)
 		{
-			dist = sqrt(pow(floor(x) - all->x, 2) + pow((x / a) - all->y, 2));
+			dist = sqrt(pow(/* floor(x) */x - all->x, 2) + pow((x / a) - all->y, 2));
 			printf("knocked x in %d %d at %f m (%f deg)\n",
 				(int)floor(x / a), (int)floor(x), dist, rad);
 			draw_pixel_line(all, dist, rad - all->z);
 		}
-		else if (x + a > ceil(x))
+		else if (x + a > ceil(x) && x + a < 10 && x / a < 10 && x > 0 && x / a > 0)
 		{
 			printf("checkingg (%f, %f)\n", ceil(x), floor(x / a));
 			if (all->map[(int)floor(x / a)][(int)ceil(x)] == 1) //ceil or floor or nothing (x / a)
 			{
-				dist = sqrt(pow(ceil(x) - all->x, 2)
-						+ pow(floor(x / a) - all->y, 2));
+				dist = sqrt(pow(/* ceil(x) */x - all->x, 2)
+						+ pow(/* floor(x / a) */x / a - all->y, 2));
 				printf("knocked y in %d %d at %f m (%f deg)\n",
 					(int)floor(x / a), (int)ceil(x), dist, rad);
 				draw_pixel_line(all, dist, rad - all->z);
 			}
 		}
-		rad += 0.1;
+		rad += 0.05;
 		x = all->x;
 	}
 }
@@ -113,7 +116,7 @@ void	center_ray(t_all *all)
 		y ++;
 		dist ++;
 	}
-	draw_pixel_line(all, dist, 0);
+	//draw_pixel_line(all, dist, 0);
 }
 
 void	camera_turn(t_all *all, int i)
@@ -121,12 +124,12 @@ void	camera_turn(t_all *all, int i)
 	if (i == 1)
 	{
 		printf ("look right\n");
-		all->z -= 15;
+		all->z -= 5;
 	}
 	if (i == 2)
 	{
 		printf ("look left\n");
-		all->z += 15;
+		all->z += 5;
 	}
 	while (all->z < 0)
 		all->z += 360;
@@ -158,8 +161,8 @@ void	press_keys(mlx_key_data_t keydata, t_all *all)
 		if (all->map[(int)floor(all->y + sin((all->z - 90) * PI / 180))]
 			[(int)floor(all->x + cos((all->z - 90) * PI / 180))] != 1)
 		{
-			all->x += cos((all->z - 90) * PI / 180);
-			all->y += sin((all->z - 90) * PI / 180);
+			all->x += cos((all->z + 90) * PI / 180);
+			all->y += sin((all->z + 90) * PI / 180);
 			printf ("going right to (%f, %f)\n", all->x, all->y);
 			ray(all);
 		}
@@ -191,8 +194,8 @@ void	press_keys(mlx_key_data_t keydata, t_all *all)
 		if (all->map[(int)floor(all->y + sin((all->z + 90) * PI / 180))]
 			[(int)floor(all->x + cos((all->z + 90) * PI / 180))] != 1)
 		{
-			all->x += cos((all->z + 90) * PI / 180);
-			all->y += sin((all->z + 90) * PI / 180);
+			all->x += cos((all->z - 90) * PI / 180);
+			all->y += sin((all->z - 90) * PI / 180);
 			printf ("going left to (%f, %f)\n", all->x, all->y);
 			ray(all);
 		}
@@ -272,7 +275,7 @@ int	main(int argc, char **argv)
 	all.background = mlx_new_image(all.mlx, 1600, 1000);
 	mlx_image_to_window(all.mlx, all.background, 0, 0);
 	mlx_set_setting(MLX_STRETCH_IMAGE, 1);
-	window(&all);
+//	window(&all);
 	sky_floor(&all);
 	center_ray(&all);
 	every_ray(&all);
