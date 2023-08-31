@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:25:42 by jchamak           #+#    #+#             */
-/*   Updated: 2023/08/30 12:53:54 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/08/31 11:33:06 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ typedef struct s_all
 	mlx_texture_t	*texture;
 	double			x;
 	double			y;
-	int				z;
-	int				hz;
-	int				lz;
+	double			z;
+	double			hz;
+	double			lz;
 	char			*NO_texture;
 	char			*SO_texture;
 	char			*WE_texture;
