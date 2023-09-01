@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/08/31 16:53:03 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/01 15:02:37 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,68 +35,56 @@ void	draw_pixel_line(t_all *all, double dist, double rad)
 	int		i;
 	double	pos;
 
-	pix = 100 - (dist - 2) * 10;
+	pix = HEIGHT / 10 - (dist - 2) * HEIGHT / 100;
 	end = pix * 8;
-	i = 1000 - end;
-	pos = ((135 + rad) / 90) * 800;
+	i = HEIGHT - end;
+	pos = ((135 + rad) / 90) * WIDTH / 2;
 	rad += 45;
 	printf("rad = %f, pos = %f\n", rad, pos);
-	printf ("drawing a line from %d to %d, for %f m at %f degres (x = %f)\n", i, end, dist, rad, - rad / 45 * 1600 + 1600);
-	while (i < end && i >= 0 && rad >= 0 && rad <= 90)
+//	printf ("drawing a line from %d to %d, for %f m at %f degres (x = %f)\n", i, end, dist, rad, - rad / 45 * WIDTH + WIDTH);
+	while (i < end && i >= 0)
 	{
 		if (rad == 0)
-			mlx_put_pixel(all->background, 800, i, 0x0000ff);
+			mlx_put_pixel(all->background, WIDTH / 2, i, 0x0000ff);
 		else if (rad >= 45)
-			mlx_put_pixel(all->background, rad / 45 * 1600 + 1600, i, 0x0000ff);
-		else if (rad < 45)
-			mlx_put_pixel(all->background, -rad / 45 * 1600 + 1600, i, 0x0000ff);
+			mlx_put_pixel(all->background, rad / 45
+				* WIDTH + WIDTH, i, 0x0000ff);
+		else/*  if (rad < 45) */
+			mlx_put_pixel(all->background, -rad / 45
+				* WIDTH + WIDTH, i, 0x00ff00);
 		i ++;
 	}
 }
 
-void	every_ray(t_all *all)
+void	every_ray(t_all *all, double rad)
 {
 	double	x;
 	double	a;
 	double	dist;
-	double	rad;
 	double	mrad;
 
-	rad = all->lz;
 	mrad = all->hz;
-	printf("an (%f, %f)\n", rad, mrad);
-	a = fabs(cos(rad * PI / 180)) / fabs(sin(rad * PI / 180));
-	x = all->x;
-	printf("----x = %f, a = %f\n", x, a);
-	//printf("checking (%f , %f)\n", floor(x), floor(y));
+	a = cos(rad * PI / 180) / sin(rad * PI / 180);
+	x = all->x + a;
 	center_ray(all);
-	x += a;
-	while (x < 10 && floor(x / a) < 10 && x > 0 && x / a > 0)
+	printf ("alors :  %f / %f = %f\n", x, a, x / a);
+	while (x < all->map_width && floor(x / a) < all->map_height - 1
+		&& x > 0 && x / a > 0 && rad < mrad)
 	{
-		a = fabs(cos(rad * PI / 180)) / fabs(sin(rad * PI / 180));
-		//x += a;
-		printf("checkingg (%f, %f)\n", floor(x), floor(x / a));
-		if (all->map[(int)floor(x / a)][(int)floor(x)] == 1 && x + a < 10 && x / a < 10 && x > 0 && x / a > 0)
+		printf ("ok\n");
+		a = cos(rad * PI / 180) / sin(rad * PI / 180);
+		printf ("checking (%d, %d) // (%d, %d)\n", (int)floor(x) ,(int)floor(x / a), (int)ceil(x), (int)floor(x / a));
+		if (all->map[(int)floor(x / a)][(int)floor(x)] == 1 || (x + a > ceil(x)
+			&& all->map[(int)floor(x / a)][(int)ceil(x)] == 1))
 		{
-			dist = sqrt(pow(/* floor(x) */x - all->x, 2) + pow((x / a) - all->y, 2));
-			printf("knocked x in %d %d at %f m (%f deg)\n",
-				(int)floor(x / a), (int)floor(x), dist, rad);
+			printf("wall\n");
+			dist = sqrt(pow(x - all->x, 2) + pow((x / a) - all->y, 2));
 			draw_pixel_line(all, dist, rad - all->z);
 		}
-		else if (x + a > ceil(x) && x + a < 10 && x / a < 10 && x > 0 && x / a > 0)
-		{
-			printf("checkingg (%f, %f)\n", ceil(x), floor(x / a));
-			if (all->map[(int)floor(x / a)][(int)ceil(x)] == 1) //ceil or floor or nothing (x / a)
-			{
-				dist = sqrt(pow(/* ceil(x) */x - all->x, 2)
-						+ pow(/* floor(x / a) */x / a - all->y, 2));
-				printf("knocked y in %d %d at %f m (%f deg)\n",
-					(int)floor(x / a), (int)ceil(x), dist, rad);
-				draw_pixel_line(all, dist, rad - all->z);
-			}
-		}
-		rad += 0.05;
+		rad += 0.5;
 		x = all->x;
+/* 		if (rad > mrad - 45)
+			all->z += 45; */
 	}
 }
 
@@ -151,7 +139,7 @@ void	camera_turn(t_all *all, int i)
 void	ray(t_all *all)
 {
 	sky_floor(all);
-	every_ray(all);
+	every_ray(all, all->lz);
 }
 
 void	press_keys(mlx_key_data_t keydata, t_all *all)
@@ -229,7 +217,6 @@ void	window(t_all *all)
 	if (!all->texture)
 		ft_exit("error\n-GRASS TEXTURE NOT LOADED-", -1);
 	all->g_img = mlx_texture_to_image(all->mlx, all->texture);
-	//mlx_image_to_window(all->mlx, all->g_img, 780, 700);
 }
 
 void	sky_floor(t_all *all)
@@ -237,20 +224,20 @@ void	sky_floor(t_all *all)
 	int	x;
 	int	y;
 
-	x = 0;
-	y = 0;
-	while (y ++ < 500)
+	x = -1;
+	y = -1;
+	while (y ++ < HEIGHT / 2)
 	{
-		while (x ++ < 1599)
+		while (x ++ < WIDTH)
 			mlx_put_pixel(all->background, x, y, 0x8989ff);
-		x = 0;
+		x = -1;
 	}
-	y = 500;
-	while (y ++ < 999)
+	y = HEIGHT / 2;
+	while (y ++ < HEIGHT - 1)
 	{
-		while (x ++ < 1599)
+		while (x ++ < WIDTH)
 			mlx_put_pixel(all->background, x, y, 0xff9e3d);
-		x = 0;
+		x = -1;
 	}
 }
 
@@ -267,18 +254,16 @@ int	main(int argc, char **argv)
 	all.z = 90;
 	all.lz = 45;
 	all.hz = 135;
-	all.mlx = mlx_init(1600, 1000, "MLX42", 0);
+	all.mlx = mlx_init(WIDTH, HEIGHT, "MLX42", 0);
 	if (all.mlx)
 		mlx_set_window_title(all.mlx, "Cub3d");
 	else
 		ft_exit("error\n-MLX PROBLEM-", -1);
-	all.background = mlx_new_image(all.mlx, 1600, 1000);
+	all.background = mlx_new_image(all.mlx, WIDTH, HEIGHT);
 	mlx_image_to_window(all.mlx, all.background, 0, 0);
 	mlx_set_setting(MLX_STRETCH_IMAGE, 1);
-//	window(&all);
-	sky_floor(&all);
-	center_ray(&all);
-	every_ray(&all);
+	window(&all);
+	ray(&all);
 	printf ("starting at (%f, %f)\n", all.x, all.y);
 	mlx_key_hook(all.mlx, &my_hook, ((void *)&all));
 	mlx_loop(all.mlx);
