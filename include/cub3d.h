@@ -33,6 +33,10 @@ typedef struct s_all
 	mlx_texture_t	*texture;
 	double			x;
 	double			y;
+	double			oldx;
+	double			oldy;
+	int			oldchar;
+	double			ray_hits[2048][2];
 	double			z;
 	double			hz;
 	double			lz;
@@ -54,5 +58,6 @@ typedef struct s_all
 int		main_validator(t_all *all, char **argv);
 void	parser_init(t_all *all);
 void	ft_free(t_all *all);
+void	draw_minimap(t_all *all);
 
 #endif

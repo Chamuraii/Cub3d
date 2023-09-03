@@ -68,6 +68,7 @@ void	every_ray(t_all *all, double rad)
 	x = all->x + a;
 	center_ray(all);
 	printf ("alors :  %f / %f = %f\n", x, a, x / a);
+	int i = 0;
 	while (x < all->map_width && floor(x / a) < all->map_height - 1
 		&& x > 0 && x / a > 0 && rad < mrad)
 	{
@@ -77,10 +78,14 @@ void	every_ray(t_all *all, double rad)
 		if (all->map[(int)floor(x / a)][(int)floor(x)] == 1 || (x + a > ceil(x)
 			&& all->map[(int)floor(x / a)][(int)ceil(x)] == 1))
 		{
+			all->ray_hits[i][0] = floor(x / a);
+			all->ray_hits[i++][1] = floor(x);
 			printf("wall\n");
 			dist = sqrt(pow(x - all->x, 2) + pow((x / a) - all->y, 2));
 			draw_pixel_line(all, dist, rad - all->z);
 		}
+		all->ray_hits[i][0] = -1;
+		all->ray_hits[i][1] = -1;
 		rad += 0.5;
 		x = all->x;
 /* 		if (rad > mrad - 45)
@@ -209,6 +214,7 @@ void	my_hook(mlx_key_data_t keydata, void *param)
 	if (mlx_is_key_down(all->mlx, MLX_KEY_ESCAPE))
 		ft_exit("BYE <3", 1);
 	press_keys(keydata, all);
+	draw_minimap(all);
 }
 
 void	window(t_all *all)

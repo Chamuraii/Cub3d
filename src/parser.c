@@ -30,6 +30,7 @@ void	parser_init(t_all *all)
 	all->map_height = 0;
 	all->x = 0;
 	all->y = 0;
+	all->oldchar = 0;
 }
 
 char	*get_next_line_no_nl(int fd)
@@ -252,6 +253,8 @@ int	map_validator(t_all *all, char **str, int fd)
 					return (0);
 				all->y = j;
 				all->x = i;
+				all->oldy = j;
+				all->oldx = i;
 				player_count = 1;
 			}
 			++i;
