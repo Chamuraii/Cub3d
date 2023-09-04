@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minimap.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jorgfern <jorgfern@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/02 20:21:03 by jorgfern          #+#    #+#             */
-/*   Updated: 2023/09/02 20:21:03 by jorgfern         ###   ########.fr       */
+/*   Updated: 2023/09/04 12:32:32 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,18 @@ void	update_player_pos(t_all *all)
 void	draw_ray_minimap(t_all *all)
 {
 	double	m;
-	double n;
-	double y;
-	double x = all->x * 16;
-	double ray_y;
+	double	n;
+	double	y;
+	double	ray_y;
 	double	ray_x;
-	double sum_x;
+	double	sum_x;
+	double	x;
 
 	for (int i = 0; all->ray_hits[i][0] != -1; i++)
 	{
-		ray_y = all->ray_hits[0][0] * 16;
-		ray_x = all->ray_hits[0][1] * 16;
+		x = all->x * 16;
+		ray_y = all->ray_hits[i][0] * 16;
+		ray_x = all->ray_hits[i][1] * 16;
 		m = ((ray_y) - all->y * 16) / ((ray_x) - x);
 		n = (((all->y * 16) - (m * x)));
 		if (x < ray_x)
@@ -54,7 +55,6 @@ void	draw_ray_minimap(t_all *all)
 			x += sum_x;
 		}
 	}
-
 }
 
 void	draw_minimap(t_all *all)
