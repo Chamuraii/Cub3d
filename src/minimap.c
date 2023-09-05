@@ -101,9 +101,9 @@ void	draw_minimap(t_all *all)
 		y = 0;
 	}
 	start_offset_y = y;
-	if (y >= all->map_height - 32)
+	if (y >= all->map_height - 32  && all->map_height > 32)
 		y = all->map_height - 32;
-	if (start_offset_y > all->map_height - 32)
+	if (start_offset_y > all->map_height - 32  && all->map_height > 32)
 		start_offset_y = (int)all->map_height - 32;
 	while (y < (int)round(all->y) + 16 + y_offset_u && y < all->map_height)
 	{
@@ -113,10 +113,10 @@ void	draw_minimap(t_all *all)
 			x_offset_l = -x;
 			x = 0;
 		}
-		if (x + 16 > all->map_width - 16)
+		if (x + 16 > all->map_width - 16 && all->map_width > 32)
 			x = (int)all->map_width - 32;
 		start_offset_x = x;
-		if (start_offset_x >= all->map_width - 32)
+		if (start_offset_x >= all->map_width - 32 && all->map_width > 32)
 			start_offset_x = (int)all->map_width - 32;
 		if (((int)round(all->x) + player_dist) > all->map_width)
 			player_dist = -((int)round(all->x) - (int)all->map_width);
