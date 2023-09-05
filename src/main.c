@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/04 17:04:43 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/05 17:52:39 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,57 +69,114 @@ double	cadran(t_all *all, double rad)
 	a = 0;
 	rad = good_angles(all, rad);
 	if (rad > 0 && rad < 90)
+	{
 		a = cos(rad * PI / 180) / sin(rad * PI / 180);
+	//	printf ("cad 1\n");
+	}
 	else if (rad > 90 && rad < 180)
+	{
 		a = -cos(rad * PI / 180) / sin(rad * PI / 180);
+		//printf ("cad 2\n");
+	}
 	else if (rad > 180 && rad < 270)
+	{
 		a = cos(rad * PI / 180) / sin(rad * PI / 180);
+		//printf ("cad 3\n");
+	}
 	else if (rad > 270 && rad < 360)
-		a = cos(rad * PI / 180) / -sin(rad * PI / 180);
+	{
+		a = -cos(rad * PI / 180) / sin(rad * PI / 180);
+		//printf ("cad 4\n");
+	}
 	else
 		a = 1;
 	//printf("a == %f\n", a);
 	return (a);
 }
 
+double	change_x(t_all *all, double rad, double a, double x)
+{
+	if (rad + all->z < 90 && rad + all->z > 0)
+	{
+		x -= a;
+		//printf ("x 1\n");
+	}
+	else if (rad + all->z < 180 && rad + all->z > 90)
+	{
+		x += a;
+		//printf ("x 2\n");
+	}
+	else if (rad + all->z < 270 && rad + all->z > 180)
+	{
+		x += a;
+		//printf ("x 3\n");
+	}
+	else
+	{
+		x -= a;
+	//	printf ("x 4\n");
+	}
+	return (x);
+}
+
+double	change_y(t_all *all, double rad, double a, double y)
+{
+	if (rad + all->z < 90 && rad + all->z > 0)
+		y += a;
+	else if (rad + all->z < 180 && rad + all->z > 90)
+		y += a;
+	else if (rad + all->z < 270 && rad + all->z > 180)
+		y -= a;
+	else
+		y -= a;
+	return (y);
+}
+
 void	every_ray(t_all *all, double rad)
 {
 	double	x;
+	double	y;
 	double	dist;
 	double	a;
 	int		i;
 
 	rad = 0;
-	a = cadran (all, rad + all->z);
-	x = all->x + a;
 	i = 0;
 	while (rad <= 90)
 	{
-		a = cadran (all, rad + all->z);
-		x = all->x + a;
-		if (x < all->map_width && floor(x / a) < all->map_height - 1
-			&& x > 0 && x / a > 0)
-		{
-			//printf("checking (%f, %f) // (%f, %f)... %f\n", x , x / a, ceil(x), x / a, all->lz + rad);
-			if (all->map[(int)floor(x / a)][(int)floor(x)] == 1
-				|| (x + a > ceil(x)
-				&& all->map[(int)floor(x / a)][(int)ceil(x)] == 1))
-			{
-				all->ray_hits[i][0] = floor(x / a);
-				all->ray_hits[i++][1] = floor(x);
-				dist = sqrt(pow(x - all->x, 2) + pow((x / a) - all->y, 2));
-				draw_pixel_line(all, dist, rad);
-				x = all->x;
-			}
-			all->ray_hits[i][0] = -1;
-			all->ray_hits[i][1] = -1;
-		}
-		rad += 1;
 		if (rad == 0 || rad == 90 || rad == 180 || rad == 270)
-			rad += 1;
+			rad += 5;
+		a = cadran (all, good_angles(all, rad + all->z));
+		printf("a = %f\n", a);
+		x = 0;
+		y = 0;
+		while (x + all->x < all->map_width && floor(y / a + all->y) < all->map_height - 1
+			&& x + all->x >= 0 && y / a + all->y >= 0 && !(all->map[(int)floor(y / a + all->y)]
+				[(int)floor(x + all->x)] == 1 || (x + a + all->x > ceil(x + all->x)
+					&& all->map[(int)floor(y / a + all->y)][(int)ceil(x + all->x)] == 1)))
+		{
+			printf("checking (%f, %f) // (%f, %f)... %f\n", x , y / a, ceil(x), y / a, all->lz + rad);
+			dist = sqrt(pow(x - all->x, 2) + pow((y / a) - all->y, 2));
+			draw_pixel_line(all, dist, good_angles(all, rad + all->z));
+			printf("cadraddd %f\n", good_angles(all, rad + all->z));
+			a = cadran (all, good_angles(all, rad + all->z));
+			all->ray_hits[i][0] = floor(y / a + all->y);
+			if (x + a + all->x > ceil(x + all->x))
+				all->ray_hits[i++][1] = ceil(x + all->x);
+			else
+				all->ray_hits[i++][1] = x + all->x;
+			x = change_x(all, rad, a, x);
+			y = change_y(all, rad, a, y);
+			printf("rad == %f\n", rad + all->z);
+		}
+	//	printf ("du coup (%d,%d) %f\n", (int)floor(y / a), (int)floor(x), all->lz + rad);
+		rad += 2;
+		if (rad == 0 || rad == 90 || rad == 180 || rad == 270)
+			rad += 2;
+		all->ray_hits[i][0] = -1;
+		all->ray_hits[i][1] = -1;
 	}
 }
-
 
 void	camera_turn(t_all *all, int i)
 {
@@ -133,20 +190,20 @@ void	camera_turn(t_all *all, int i)
 		printf ("look left\n");
 		all->z += 5;
 	}
-/* 	while (all->z < 0)
+	while (all->z < 0)
 		all->z += 360;
 	while (all->z >= 360)
-		all->z -= 360; */
+		all->z -= 360;
 	all->hz = all->z + 45;
 	all->lz = all->z - 45;
-/* 	while (all->hz < 0)
+	while (all->hz < 0)
 		all->hz += 360;
 	while (all->hz >= 360)
 		all->hz -= 360;
 	while (all->lz < 0)
 		all->lz += 360;
 	while (all->lz >= 360)
-		all->lz -= 360; */
+		all->lz -= 360;
 	printf ("(%f) -> %f to %f visible\n", all->z, all->hz, all->lz);
 }
 
