@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/06 16:03:10 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/06 17:43:38 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,6 @@ double	change_y(t_all *all, double rad, double a, double y)
 	return (y);
 }
 
-
 void	every_ray(t_all *all, double rad)
 {
 	double	x;
@@ -148,28 +147,67 @@ void	every_ray(t_all *all, double rad)
 	while (rad <= 90)
 	{
 		a = cadran (all, good_angles(all, rad + all->z - 45));
-		printf("a = %f\n", a);
+		//printf("a = %f\n", a);
 		x = 0;
 		y = 0;
-		while (x + all->x <= all->map_width && y / a + all->y
-			<= all->map_height && x + all->x >= 0 && y / a + all->y - 1 >= 0
-			&& !(all->map[(int)floor(y / a + all->y - 1)][(int)floor(x + all->x)]
-			== 1 || (x + a + all->x > ceil(x + all->x) && all->map[(int)
-					floor(y / a + all->y)][(int)ceil(x + all->x)] == 1)))
+		if (rad + all->z <= 180)
 		{
-			printf("checking (%d, %d) //... %f\n", (int)floor(x + all->x) , (int)floor(y / a + all->y), all->lz + rad);
-			a = cadran(all, good_angles(all, rad + all->z - 45));
-			all->ray_hits[i][0] = floor(y / a + all->y) - 1;
-			if (x + a + all->x > ceil(x + all->x))
-				all->ray_hits[i++][1] = ceil(x + all->x);
-			else
-				all->ray_hits[i++][1] = x + all->x;
-			x = change_x(all, rad - 45, a, x);
-			y = change_y(all, rad - 45, a, y);
+			while (x + all->x <= all->map_width && y / a + all->y + 2
+				<= all->map_height && x + all->x >= 0 && y / a + all->y + 1 >= 0
+				&& !(all->map[(int)floor(y / a + all->y) + 1][(int)floor(x + all->x)]
+				== 1 || (x + a + all->x > ceil(x + all->x) && all->map[(int)
+						floor(y / a + all->y) + 1][(int)ceil(x + all->x)] == 1)))
+			{
+			//	printf("checking (%d, %d) //... %f\n", (int)floor(x + all->x), (int)floor(y / a + all->y), all->lz + rad);
+				all->ray_hits[i][0] = floor(y / a + all->y) + 2;
+				if (x + a + all->x > ceil(x + all->x))
+					all->ray_hits[i++][1] = ceil(x + all->x);
+				else
+					all->ray_hits[i++][1] = x + all->x;
+				x = change_x(all, rad - 45, a, x);
+				y = change_y(all, rad - 45, a, y);
+			}
 		}
-	//	dist = sqrt(pow(x - change_x(all, rad - 45, a, x), 2) + pow((y / a) - change_y(all, rad - 45, a, y), 2));
-	//	draw_pixel_line(all, dist, good_angles(all, rad + all->z - 45));
+		else if (rad + all->z >= 270)
+		{
+			while (x + all->x + 1 <= all->map_width && y / a + all->y
+				<= all->map_height && x + all->x + 1 >= 0 && y / a + all->y >= 0
+				&& !(all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x + 1)]
+				== 1 || (x + a + all->x > ceil(x + all->x) && all->map[(int)
+						floor(y / a + all->y)][(int)ceil(x + all->x) + 1] == 1)))
+			{
+				//printf("checking (%d, %d) //... %f\n", (int)floor(x + all->x) , (int)floor(y / a + all->y), all->lz + rad);
+				all->ray_hits[i][0] = floor(y / a + all->y);
+				if (x + a + all->x > ceil(x + all->x))
+					all->ray_hits[i++][1] = ceil(x + all->x) + 1;
+				else
+					all->ray_hits[i++][1] = x + all->x + 1;
+				x = change_x(all, rad - 45, a, x);
+				y = change_y(all, rad - 45, a, y);
+			}
+		}
+		else
+		{
+			while (x + all->x <= all->map_width && y / a + all->y
+				<= all->map_height && x + all->x >= 0 && y / a + all->y >= 0
+				&& !(all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]
+				== 1 || (x + a + all->x > ceil(x + all->x) && all->map[(int)
+						floor(y / a + all->y)][(int)ceil(x + all->x)] == 1)))
+			{
+				//printf("checking (%d, %d) //... %f\n", (int)floor(x + all->x) , (int)floor(y / a + all->y), all->lz + rad);
+				all->ray_hits[i][0] = floor(y / a + all->y);
+				if (x + a + all->x > ceil(x + all->x))
+					all->ray_hits[i++][1] = ceil(x + all->x);
+				else
+					all->ray_hits[i++][1] = x + all->x;
+				x = change_x(all, rad - 45, a, x);
+				y = change_y(all, rad - 45, a, y);
+			}
+		}
+		//dist = sqrt(pow(x - change_x(all, rad - 45, a, x), 2) + pow((y / a) - change_y(all, rad - 45, a, y), 2));
+		//draw_pixel_line(all, dist, good_angles(all, rad + all->z - 45));
 	//	printf("final %f / %f (%d, %d)\n", x + all->x, y / a + all->y, all->map_width, all->map_height);
+		a = cadran(all, good_angles(all, rad + all->z - 45));
 		rad += 0.35;
 		all->ray_hits[i][0] = -1;
 		all->ray_hits[i][1] = -1;
