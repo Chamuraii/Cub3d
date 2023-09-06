@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/05 17:52:39 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/06 16:03:10 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ double	cadran(t_all *all, double rad)
 		a = cos(rad * PI / 180) / sin(rad * PI / 180);
 	//	printf ("cad 1\n");
 	}
-	else if (rad > 90 && rad < 180)
+	else if (rad >= 90 && rad < 180)
 	{
 		a = -cos(rad * PI / 180) / sin(rad * PI / 180);
 		//printf ("cad 2\n");
@@ -83,13 +83,15 @@ double	cadran(t_all *all, double rad)
 		a = cos(rad * PI / 180) / sin(rad * PI / 180);
 		//printf ("cad 3\n");
 	}
-	else if (rad > 270 && rad < 360)
+	else if (rad >= 270 && rad < 360)
 	{
 		a = -cos(rad * PI / 180) / sin(rad * PI / 180);
 		//printf ("cad 4\n");
 	}
+	else if (rad == 180)
+		a = -10;
 	else
-		a = 1;
+		a = 10;
 	//printf("a == %f\n", a);
 	return (a);
 }
@@ -132,6 +134,7 @@ double	change_y(t_all *all, double rad, double a, double y)
 	return (y);
 }
 
+
 void	every_ray(t_all *all, double rad)
 {
 	double	x;
@@ -144,35 +147,30 @@ void	every_ray(t_all *all, double rad)
 	i = 0;
 	while (rad <= 90)
 	{
-		if (rad == 0 || rad == 90 || rad == 180 || rad == 270)
-			rad += 5;
-		a = cadran (all, good_angles(all, rad + all->z));
+		a = cadran (all, good_angles(all, rad + all->z - 45));
 		printf("a = %f\n", a);
 		x = 0;
 		y = 0;
-		while (x + all->x < all->map_width && floor(y / a + all->y) < all->map_height - 1
-			&& x + all->x >= 0 && y / a + all->y >= 0 && !(all->map[(int)floor(y / a + all->y)]
-				[(int)floor(x + all->x)] == 1 || (x + a + all->x > ceil(x + all->x)
-					&& all->map[(int)floor(y / a + all->y)][(int)ceil(x + all->x)] == 1)))
+		while (x + all->x <= all->map_width && y / a + all->y
+			<= all->map_height && x + all->x >= 0 && y / a + all->y - 1 >= 0
+			&& !(all->map[(int)floor(y / a + all->y - 1)][(int)floor(x + all->x)]
+			== 1 || (x + a + all->x > ceil(x + all->x) && all->map[(int)
+					floor(y / a + all->y)][(int)ceil(x + all->x)] == 1)))
 		{
-			printf("checking (%f, %f) // (%f, %f)... %f\n", x , y / a, ceil(x), y / a, all->lz + rad);
-			dist = sqrt(pow(x - all->x, 2) + pow((y / a) - all->y, 2));
-			draw_pixel_line(all, dist, good_angles(all, rad + all->z));
-			printf("cadraddd %f\n", good_angles(all, rad + all->z));
-			a = cadran (all, good_angles(all, rad + all->z));
-			all->ray_hits[i][0] = floor(y / a + all->y);
+			printf("checking (%d, %d) //... %f\n", (int)floor(x + all->x) , (int)floor(y / a + all->y), all->lz + rad);
+			a = cadran(all, good_angles(all, rad + all->z - 45));
+			all->ray_hits[i][0] = floor(y / a + all->y) - 1;
 			if (x + a + all->x > ceil(x + all->x))
 				all->ray_hits[i++][1] = ceil(x + all->x);
 			else
 				all->ray_hits[i++][1] = x + all->x;
-			x = change_x(all, rad, a, x);
-			y = change_y(all, rad, a, y);
-			printf("rad == %f\n", rad + all->z);
+			x = change_x(all, rad - 45, a, x);
+			y = change_y(all, rad - 45, a, y);
 		}
-	//	printf ("du coup (%d,%d) %f\n", (int)floor(y / a), (int)floor(x), all->lz + rad);
-		rad += 2;
-		if (rad == 0 || rad == 90 || rad == 180 || rad == 270)
-			rad += 2;
+	//	dist = sqrt(pow(x - change_x(all, rad - 45, a, x), 2) + pow((y / a) - change_y(all, rad - 45, a, y), 2));
+	//	draw_pixel_line(all, dist, good_angles(all, rad + all->z - 45));
+	//	printf("final %f / %f (%d, %d)\n", x + all->x, y / a + all->y, all->map_width, all->map_height);
+		rad += 0.35;
 		all->ray_hits[i][0] = -1;
 		all->ray_hits[i][1] = -1;
 	}
@@ -217,9 +215,6 @@ void	press_keys(mlx_key_data_t keydata, t_all *all)
 {
 	if (mlx_is_key_down(all->mlx, MLX_KEY_D))
 	{
-		//printf ("%d\n",all->map[(int)floor(all->y - (sin((all->z + 90) * PI / 180)))]
-		//	[(int)floor(all->x + (cos((all->z + 90) * PI / 180)))]);
-	//	printf("(%d, %d)\n", (int)floor(all->y - (sin((all->z + 90) * PI / 180))), (int)floor(all->x + (cos((all->z + 90) * PI / 180))));
 		if (all->map[(int)floor(all->y - (sin((all->z + 90) * PI / 180)))]
 			[(int)floor(all->x + (cos((all->z + 90) * PI / 180)))] != 1)
 		{
@@ -231,13 +226,10 @@ void	press_keys(mlx_key_data_t keydata, t_all *all)
 	}
 	else if (mlx_is_key_down(all->mlx, MLX_KEY_S))
 	{
-		//printf ("%d\n", all->map[(int)floor(all->y - (sin(all->z * PI / 180)))]
-		//	[(int)floor(all->x - (cos(all->z * PI / 180)))]);
-		//printf("(%d, %d)\n", (int)floor(all->y - (sin(all->z * PI / 180))), (int)floor(all->x - (cos(all->z * PI / 180))));
 		if (all->map[(int)floor(all->y - (sin(all->z * PI / 180)))]
-			[(int)floor(all->x - (cos(all->z * PI / 180)))] != 1)
+			[(int)floor(all->x + (cos(all->z * PI / 180)))] != 1)
 		{
-			all->x -= cos(all->z * PI / 180);
+			all->x += cos(all->z * PI / 180);
 			all->y -= sin(all->z * PI / 180);
 			printf ("going down to (%f, %f)\n", all->y, all->x);
 			ray(all);
@@ -245,9 +237,6 @@ void	press_keys(mlx_key_data_t keydata, t_all *all)
 	}
 	else if (mlx_is_key_down(all->mlx, MLX_KEY_W))
 	{
-	//	printf ("%d\n",all->map[(int)floor(all->y + (sin(all->z * PI / 180)))]
-		//	[(int)floor(all->x - (cos(all->z * PI / 180)))]);
-		//printf("(%d, %d)\n", (int)floor(all->y + (sin(all->z * PI / 180))), (int)floor(all->x + (cos(all->z * PI / 180))));
 		if (all->map[(int)floor(all->y + (sin(all->z * PI / 180)))]
 			[(int)floor(all->x - (cos(all->z * PI / 180)))] != 1)
 		{
@@ -259,14 +248,11 @@ void	press_keys(mlx_key_data_t keydata, t_all *all)
 	}
 	else if (mlx_is_key_down(all->mlx, MLX_KEY_A))
 	{
-	//	printf ("%d\n", all->map[(int)floor(all->y + (sin((all->z - 90) * PI / 180)))]
-		//	[(int)floor(all->x + (cos((all->z - 90) * PI / 180)))]);
-		//printf("(%d, %d)\n", (int)floor(all->y + (sin((all->z - 90) * PI / 180))), (int)floor(all->x + (cos((all->z - 90) * PI / 180))));
-		if (all->map[(int)floor(all->y + (sin((all->z - 90) * PI / 180)))]
+		if (all->map[(int)floor(all->y - (sin((all->z - 90) * PI / 180)))]
 			[(int)floor(all->x + (cos((all->z - 90) * PI / 180)))] != 1)
 		{
 			all->x += cos((all->z - 90) * PI / 180);
-			all->y += sin((all->z - 90) * PI / 180);
+			all->y -= sin((all->z - 90) * PI / 180);
 			printf ("going left to (%f, %f)\n", all->y, all->x);
 			ray(all);
 		}
@@ -330,7 +316,7 @@ int	main(int argc, char **argv)
 	t_all	all;
 
 	parser_init(&all);
-	if (!main_validator(&all, argv))
+	if (!main_validator(&all, argv, argc))
 		return (ft_printf ("Error\n"), -1);
 	else
 		ft_printf ("Map validation successful!\n");

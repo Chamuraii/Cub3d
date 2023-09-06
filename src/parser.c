@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jorgfern <jorgfern@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 18:52:34 by jorgfern          #+#    #+#             */
-/*   Updated: 2023/08/29 21:40:32 by jorgfern         ###   ########.fr       */
+/*   Updated: 2023/09/06 16:04:48 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -316,6 +316,8 @@ int	cub_validator(t_all *all, char **argv, int fd, char **str)
 		return (0);
 	*str = get_next_line_no_nl(fd);
 	i = 0;
+	if (!(*str))
+		return (0);
 	while (*str)
 	{
 		if (!str[0][0])
@@ -362,12 +364,14 @@ void	parse_map(t_all *all)
 	}
 }
 
-int	main_validator(t_all *all, char **argv)
+int	main_validator(t_all *all, char **argv, int argc)
 {
 	int		i;
 	int		fd;
 	char	*str;
 
+	if (argc != 2)
+		return (0);
 	str = 0;
 	fd = 0;
 	i = ft_strlen(argv[1]);

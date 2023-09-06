@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:25:42 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/01 15:01:12 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/06 16:02:37 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ typedef struct s_all
 	unsigned int	j;
 }			t_all;
 
-int		main_validator(t_all *all, char **argv);
+int		main_validator(t_all *all, char **argv, int argc);
 void	parser_init(t_all *all);
 void	ft_free(t_all *all);
 void	draw_minimap(t_all *all);
