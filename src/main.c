@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/11 12:38:59 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/11 18:15:04 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,10 +88,6 @@ double	cadran(t_all *all, double rad)
 	}
 	else
 		a = 10;
-/* 	if (a > 1)
-		return (1 / a); */
-		//cadran(all, rad - 90);
-	//printf("a == %f\n", a);
 	return (a);
 }
 
@@ -141,22 +137,21 @@ double	change_y(t_all *all, double rad, double a, double y)
 void	to_ray_minimap(t_all *all, double x, double y, double a, int i)
 {
 	//printf("x = %f, y = %f\n", x, y);
-	all->ray_hits[i][0] = floor(y / a + all->y);
+	all->ray_hits[i][0] = floor(y / a + all->y + 1e-9);
 	if (x + a + all->x > ceil(x + all->x))
 	{
 		all->ray_hits[i][1] = ceil(x + all->x);
-		printf("checking (%d, %d) //\n", (int)floor(x + all->x), (int)ceil(y / a + all->y));
-		//printf("so.. %d\n", all->map[(int)ceil(y / a + all->y)][(int)floor(x + all->x)]);
+		printf("checking (%d, %d) //\n", (int)floor(x + all->x), (int)ceil(y / a + all->y + 1e-9));
+		printf("so.. %d\n", all->map[(int)floor(y / a + all->y + 1e-9)][(int)ceil(x + all->x)]);
 	}
 	else
 	{
 		all->ray_hits[i][1] = x + all->x;
-		printf("checking (%d, %d) //\n", (int)floor(x + all->x), (int)floor(y / a + all->y));
-		//printf("so.... %d\n", all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]);
+		printf("checking (%d, %f) %d//\n", (int)(x + all->x), (y / a + all->y), (int)(y / a + all->y));
+		printf("so.... %d\n", all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]);
 	}
 	//printf("a = %f\n", a);
 }
-
 void	every_ray(t_all *all, double rad)
 {
 	double	x;
@@ -167,84 +162,93 @@ void	every_ray(t_all *all, double rad)
 
 	rad = 0;
 	i = 0;
-	//while (rad <= 90)
+	while (rad <= 90)
 	{
 		a = cadran (all, good_angles(all, rad + all->lz));
 		x = 0;
 		y = 0;
-		if (good_angles(all, rad + all->lz) > 160 && good_angles(all, rad + all->lz) <= 225)
+		if (good_angles(all, rad + all->lz) > 160 && good_angles(all, rad + all->lz) <= 240)
 		{
-			printf ("4\n");
+			//printf ("4\n");
 			while (x + all->x - 1 <= all->map_width && y / a + all->y
 				<= all->map_height && x + all->x - 1 >= 0 && y / a + all->y >= 0
-				&& !(all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x - 1)]
+				&& !(all->map[(int)floor(y / a + all->y + 1e-9)][(int)floor(x + all->x - 1)]
 				== 1 || (x + a + all->x > ceil(x + all->x) && all->map[(int)
-						floor(y / a + all->y)][(int)ceil(x + all->x - 1)] == 1)))
+						floor(y / a + all->y + 1e-9)][(int)ceil(x + all->x - 1)] == 1)))
 			{
+			//	printf("(%f, %d)\n", ceil(y / a + all->y), (int)floor(x + all->x - 1));
 				to_ray_minimap(all, x, y, a, i);
 				x = change_x(all, rad, a, x);
 				y = change_y(all, rad, a, y);
 				//printf("new x = %f, y = %f\n", x, y);
-				printf("hmmm checking (%f, %f) //... %f\n", (x + all->x), (y / a + all->y), all->lz + rad);
+			//	printf("hmmm checking (%f, %f) //... %f\n", (x + all->x), (y / a + all->y), all->lz + rad);
 			}
+			//dist = sqrt(pow(x - change_x(all, rad - 45, a, x), 2) + pow((y / a) - change_y(all, rad - 45, a, y), 2));
+			//draw_pixel_line(all, dist, good_angles(all, rad + all->z - 45));
 			i ++;
 		}
 		else if (good_angles(all, rad + all->lz) < 25 || good_angles(all, rad + all->lz) >= 315)
 		{
-			printf ("6\n");
+			//printf ("6\n");
 			while (x + all->x + 1 <= all->map_width && y / a + all->y
 				<= all->map_height && x + all->x + 1 >= 0 && y / a + all->y >= 0
-				&& !(all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x + 1)]
+				&& !(all->map[(int)floor(y / a + all->y + 1e-9)][(int)floor(x + all->x + 1)]
 				== 1 || (x + a + all->x > ceil(x + all->x) && all->map[(int)
-						floor(y / a + all->y)][(int)ceil(x + all->x + 1)] == 1)))
+						floor(y / a + all->y + 1e-9)][(int)ceil(x + all->x + 1)] == 1)))
 			{
+			//	printf("(%d, %d)\n", (int)floor(y / a + all->y + 1e-9), (int)ceil(x + all->x + 1));
 				to_ray_minimap(all, x, y, a, i);
-				//printf("a = %f\n", a);
 				x = change_x(all, rad, a, x);
 				y = change_y(all, rad, a, y);
 				//printf("new x = %f, y = %f\n", x, y);
-				printf("hmmm checking (%f, %f) //... %f\n", (x + all->x), (y / a + all->y), all->lz + rad);
+				//printf("hmmm checking (%f, %f) //... %f\n", (x + all->x), (y / a + all->y), all->lz + rad);
 			}
+			//dist = sqrt(pow(x - change_x(all, rad - 45, a, x), 2) + pow((y / a) - change_y(all, rad - 45, a, y), 2));
+			//draw_pixel_line(all, dist, good_angles(all, rad + all->z - 45));
 			i ++;
 		}
 		else if (good_angles(all, rad + all->lz) >= 25 && good_angles(all, rad + all->lz) <= 160)
 		{
-			printf ("8\n");
+			//printf ("8\n");
 			while (x + all->x <= all->map_width && y / a + all->y - 1
 				<= all->map_height && x + all->x >= 0 && y / a + all->y - 1 >= 0
-				&& !(all->map[(int)floor(y / a + all->y - 1)][(int)floor(x + all->x)]
+				&& !(all->map[(int)floor(y / a + all->y - 1 + 1e-9)][(int)floor(x + all->x)]
 				== 1 || (x + a + all->x > ceil(x + all->x) && all->map[(int)
-						floor(y / a + all->y - 1)][(int)ceil(x + all->x)] == 1)))
+						floor(y / a + all->y - 1 + 1e-9)][(int)ceil(x + all->x)] == 1)))
 			{
 				to_ray_minimap(all, x, y, a, i);
 				x = change_x(all, rad, a, x);
 				y = change_y(all, rad, a, y);
 				//printf("new x = %f, y = %f\n", x, y);
-				printf("hmmm checking (%f, %f) //... %f\n", (x + all->x), (y / a + all->y), all->lz + rad);
+				//printf("hmmm checking (%f, %f) //... %f\n", (x + all->x), (y / a + all->y), all->lz + rad);
 			}
+		//	dist = sqrt(pow(x - change_x(all, rad - 45, a, x), 2) + pow((y / a) - change_y(all, rad - 45, a, y), 2));
+		//	draw_pixel_line(all, dist, good_angles(all, rad + all->z - 45));
 			i ++;
 		}
 		else
 		{
-			printf ("2\n");
+			//printf ("2\n");
 			while (x + all->x <= all->map_width && y / a + all->y
 				<= all->map_height && x + all->x >= 0 && y / a + all->y >= 0
-				&& !(all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]
+				&& !(all->map[(int)floor(y / a + all->y + 1e-9)][(int)floor(x + all->x)]
 				== 1 || (x + a + all->x > ceil(x + all->x) && all->map[(int)
-						floor(y / a + all->y)][(int)ceil(x + all->x)] == 1)))
+						floor(y / a + all->y + 1e-9)][(int)ceil(x + all->x - 1e-9)] == 1)))
 			{
 				to_ray_minimap(all, x, y, a, i);
 				x = change_x(all, rad, a, x);
 				y = change_y(all, rad, a, y);
 				//printf("new x = %f, y = %f\n", x, y);
-				printf("hmmm checking (%f, %f) //... %f\n", (x + all->x), (y / a + all->y), all->lz + rad);
+				//printf("hmmm checking (%f, %f) //... %f\n", (x + all->x), (y / a + all->y), all->lz + rad);
 			}
+			//dist = sqrt(pow(x - change_x(all, rad - 45, a, x), 2) + pow((y / a) - change_y(all, rad - 45, a, y), 2));
+		//	draw_pixel_line(all, dist, good_angles(all, rad + all->z - 45));
 			i ++;
 		}
-	//	dist = sqrt(pow(x - change_x(all, rad - 45, a, x), 2) + pow((y / a) - change_y(all, rad - 45, a, y), 2));
-	//	draw_pixel_line(all, dist, good_angles(all, rad + all->z - 45));
+/* 		dist = sqrt(pow(x - change_x(all, rad - 45, a, x), 2) + pow((y / a) - change_y(all, rad - 45, a, y), 2));
+		draw_pixel_line(all, dist, good_angles(all, rad + all->z - 45)); */
 	//	printf("final %f / %f (%d, %d)\n", x + all->x, y / a + all->y, all->map_width, all->map_height);
-	//	a = cadran(all, good_angles(all, rad + all->z - 45));
+		printf("rad = %f\n", rad + all->lz);
 		rad += 0.5;
 		all->ray_hits[i][0] = -1;
 		all->ray_hits[i][1] = -1;
