@@ -66,56 +66,57 @@ double	cadran(t_all *all, double rad)
 {
 	double	a;
 
-	rad = good_angles(all, rad);
 	if (rad > 0 && rad < 90)
 	{
 		a = 1 / tan(rad * PI / 180);
-	//	printf ("cad 1\n");
+		printf ("cad 1\n");
 	}
 	else if (rad >= 90 && rad < 180)
 	{
 		a = -1 / tan(rad * PI / 180);
-		//printf ("cad 2\n");
+		printf ("cad 2\n");
 	}
 	else if (rad > 180 && rad < 270)
 	{
 		a = 1 / tan(rad * PI / 180);
-		//printf ("cad 3\n");
+		printf ("cad 3\n");
 	}
 	else if (rad >= 270 && rad < 360)
 	{
 		a = -1 / tan(rad * PI / 180);
-		//printf ("cad 4\n");
+		printf ("cad 4\n");
 	}
 	else if (rad == 180)
 		a = -10;
 	else
 		a = 10;
+	if (a > 1)
+		cadran(all, rad - 90);
 	//printf("a == %f\n", a);
 	return (a);
 }
 
 double	change_x(t_all *all, double rad, double a, double x)
 {
-	if (rad + all->z < 90 && rad + all->z > 0)
+	if (rad + all->z <= 90 && rad + all->z > 0)
 	{
 		x -= a;
-		//printf ("x 1\n");
+		printf ("x 1\n");
 	}
-	else if (rad + all->z < 180 && rad + all->z > 90)
+	else if (rad + all->z <= 180 && rad + all->z > 90)
 	{
 		x += a;
-		//printf ("x 2\n");
+		printf ("x 2\n");
 	}
 	else if (rad + all->z < 270 && rad + all->z > 180)
 	{
 		x += a;
-		//printf ("x 3\n");
+		printf ("x 3\n");
 	}
 	else
 	{
 		x -= a;
-	//	printf ("x 4\n");
+		printf ("x 4\n");
 	}
 	return (x);
 }
@@ -143,14 +144,14 @@ void	every_ray(t_all *all, double rad)
 
 	rad = 0;
 	i = 0;
-	while (rad <= 90)
+//	while (rad <= 90)
 	{
-		a = cadran (all, good_angles(all, rad + all->z - 45));
+		a = cadran (all, good_angles(all, rad + all->lz));
 		x = 0;
 		y = 0;
-		if (good_angles(all, rad + all->z) <= 180 && good_angles(all, rad + all->z) > 90)
+/* 		if (good_angles(all, rad + all->lz) <= 180 && good_angles(all, rad + all->lz) > 90)
 		{
-		//	printf ("1\n");
+			printf ("2\n");
 			while (x + all->x <= all->map_width && y / a + all->y + 2
 				<= all->map_height && x + all->x >= 0 && y / a + all->y + 1 >= 0
 				&& !(all->map[(int)floor(y / a + all->y) + 1][(int)floor(x + all->x)]
@@ -168,17 +169,17 @@ void	every_ray(t_all *all, double rad)
 			}
 			i ++;
 		}
-		else if (good_angles(all, rad + all->z) >= 270)
+		else if (good_angles(all, rad + all->lz) >= 270)
 		{
-		//	printf ("2\n");
-			while (x + all->x <= all->map_width && y / a + all->y - 1
-				<= all->map_height && x + all->x + 1 >= 0 && y / a + all->y - 1 >= 0
-				&& !(all->map[(int)floor(y / a + all->y) - 1][(int)floor(x + all->x)]
+			printf ("4\n");
+			while (x + all->x <= all->map_width && y / a + all->y
+				<= all->map_height && x + all->x >= 0 && y / a + all->y >= 0
+				&& !(all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]
 				== 1 || (x + a + all->x > ceil(x + all->x) && all->map[(int)
-						floor(y / a + all->y) - 1][(int)ceil(x + all->x)] == 1)))
+						floor(y / a + all->y)][(int)ceil(x + all->x)] == 1)))
 			{
 				//printf("checking (%d, %d) //... %f\n", (int)floor(x + all->x) , (int)floor(y / a + all->y), all->lz + rad);
-				all->ray_hits[i][0] = floor(y / a + all->y - 1);
+				all->ray_hits[i][0] = floor(y / a + all->y);
 				if (x + a + all->x > ceil(x + all->x))
 					all->ray_hits[i][1] = ceil(x + all->x);
 				else
@@ -188,9 +189,9 @@ void	every_ray(t_all *all, double rad)
 			}
 			i ++;
 		}
-		else if (good_angles(all, rad + all->z) <= 90)
+		else if (good_angles(all, rad + all->lz) <= 90)
 		{
-		//	printf ("3\n");
+			printf ("1\n");
 			while (x + all->x <= all->map_width && y / a + all->y
 				<= all->map_height && x + all->x >= 0 && y / a + all->y >= 0
 				&& !(all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]
@@ -210,30 +211,66 @@ void	every_ray(t_all *all, double rad)
 			}
 			i ++;
 		}
-		else
+		else */
+		if (a > 1)
 		{
-		//	printf ("4\n");
-			while (x + all->x <= all->map_width && y / a + all->y
-				<= all->map_height && x + all->x >= 0 && y / a + all->y >= 0
-				&& !(all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]
+			printf ("3\n");
+			while (x / a + all->x <= all->map_width && y + all->y
+				<= all->map_height && x / a + all->x >= 0 && y + all->y >= 0
+				/* && !(all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]
 				== 1 || (x + a + all->x > ceil(x + all->x) && all->map[(int)
-						floor(y / a + all->y)][(int)ceil(x + all->x)] == 1)))
+						floor(y / a + all->y)][(int)ceil(x + all->x)] == 1)) */)
 			{
-				all->ray_hits[i][0] = floor(y / a + all->y);
-				if (x + a + all->x > ceil(x + all->x))
+				//printf("x = %f, y = %f\n", x, y);
+				all->ray_hits[i][0] = floor(y + all->y);
+				if (x + a + all->x > ceil(x / a + all->x))
 				{
-					all->ray_hits[i][1] = ceil(x + all->x + 1);
-				//	printf("checking (%d, %d) //... %f\n", (int)floor(x + all->x), (int)ceil(y / a + all->y), all->lz + rad);
-				//	printf("so.. %d\n", all->map[(int)ceil(y / a + all->y)][(int)floor(x + all->x)]);
+					all->ray_hits[i][1] = ceil(x / a + all->x);
+					printf("checking (%d, %d) //... %f\n", (int)floor(x + all->x), (int)ceil(y / a + all->y), all->lz + rad);
+					//printf("so.. %d\n", all->map[(int)ceil(y / a + all->y)][(int)floor(x + all->x)]);
 				}
 				else
 				{
-					all->ray_hits[i][1] = x + all->x + 1;
-				//	printf("checking (%d, %d) //... %f\n", (int)floor(x + all->x), (int)floor(y / a + all->y), all->lz + rad);
-				//	printf("so.... %d\n", all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]);
+					all->ray_hits[i][1] = x / a + all->x;
+					printf("checking (%d, %d) //... %f\n", (int)floor(x + all->x), (int)floor(y / a + all->y), all->lz + rad);
+					//printf("so.... %d\n", all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]);
 				}
+				printf("a = %f\n", a);
 				x = change_x(all, rad - 45, a, x);
 				y = change_y(all, rad - 45, a, y);
+				//printf("new x = %f, y = %f\n", x, y);
+				printf("hmmm checking (%f, %f) //... %f\n", (x + all->x), (y / a + all->y), all->lz + rad);
+			}
+			i ++;
+		}
+		else
+		{
+			printf ("3\n");
+			while (x + all->x <= all->map_width && y / a + all->y
+				<= all->map_height && x + all->x >= 0 && y / a + all->y >= 0
+				/* && !(all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]
+				== 1 || (x + a + all->x > ceil(x + all->x) && all->map[(int)
+						floor(y / a + all->y)][(int)ceil(x + all->x)] == 1)) */)
+			{
+				//printf("x = %f, y = %f\n", x, y);
+				all->ray_hits[i][0] = floor(y / a + all->y);
+				if (x + a + all->x > ceil(x + all->x))
+				{
+					all->ray_hits[i][1] = ceil(x + all->x);
+					printf("checking (%d, %d) //... %f\n", (int)floor(x + all->x), (int)ceil(y / a + all->y), all->lz + rad);
+					//printf("so.. %d\n", all->map[(int)ceil(y / a + all->y)][(int)floor(x + all->x)]);
+				}
+				else
+				{
+					all->ray_hits[i][1] = x + all->x;
+					printf("checking (%d, %d) //... %f\n", (int)floor(x + all->x), (int)floor(y / a + all->y), all->lz + rad);
+					//printf("so.... %d\n", all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]);
+				}
+				printf("a = %f\n", a);
+				x = change_x(all, rad - 45, a, x);
+				y = change_y(all, rad - 45, a, y);
+				//printf("new x = %f, y = %f\n", x, y);
+				printf("hmmm checking (%f, %f) //... %f\n", (x + all->x), (y / a + all->y), all->lz + rad);
 			}
 			i ++;
 		}
