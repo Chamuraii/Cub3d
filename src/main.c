@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/11 18:15:04 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/12 17:49:51 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,22 +42,19 @@ void	draw_pixel_line(t_all *all, double dist, double rad)
 	int		end;
 	int		i;
 
-	pix = HEIGHT / 10 - (dist - 1) * HEIGHT / 100;
+	pix = HEIGHT / 9 - (dist) * 3; /* HEIGHT / 200 */ //*7
 	end = pix * 9;
 	i = HEIGHT - end;
-	rad = good_angles(all, rad + 45);
+	rad = good_angles(all, rad/*  + 45 */);
 //	printf("------------------------- rad = %f\n", rad);
-	printf ("drawing a line from %d to %d, for %f m at %f degres (x = %f)\n", i, end, dist, rad, rad / 45 * WIDTH + WIDTH);
+//	printf ("drawing a line from %d to %d, for %f m at %f degres (x = %f)\n", i, end, dist, rad, rad / 45 * WIDTH + WIDTH);
 	while (i < end && i >= 0)
 	{
-		if (rad == 0)
+/* 		if (rad == 0)
 			mlx_put_pixel(all->background, WIDTH / 2, i, 0x0000ff);
-		//else if (rad >= 45)
-			mlx_put_pixel(all->background, -rad / 45
-				* WIDTH + WIDTH, i, 0x0000ff);
-/* 		else if (rad < 45)
-			mlx_put_pixel(all->background, rad / 45
-				* WIDTH + WIDTH, i, 0x00ff00); */
+		else */
+			mlx_put_pixel(all->background, -rad / 90 * WIDTH + WIDTH, i,
+				0xff0000);
 		i ++;
 	}
 }
@@ -153,6 +150,11 @@ void	to_ray_minimap(t_all *all, double x, double y, double a, int i)
 	//printf("a = %f\n", a);
 }
 
+double	distance(t_all *all, double x, double y, double a)
+{
+	return (sqrt(pow(x, 2) + pow((y / a), 2)));
+}
+
 void	every_ray(t_all *all, double rad)
 {
 	double	x;
@@ -179,7 +181,8 @@ void	every_ray(t_all *all, double rad)
 			{
 			//	printf("(%f, %d)\n", ceil(y / a + all->y), (int)floor(x + all->x - 1));
 				to_ray_minimap(all, x, y, a, i);
-				dist = sqrt(pow(x, 2) + pow(y / a, 2));
+				printf("1x == %f, y / a == %f\n", x, y / a);
+				dist = distance(all, x, y, a);
 				x = change_x(all, rad, a, x);
 				y = change_y(all, rad, a, y);
 				//printf("new x = %f, y = %f\n", x, y);
@@ -199,7 +202,8 @@ void	every_ray(t_all *all, double rad)
 			{
 			//	printf("(%d, %d)\n", (int)floor(y / a + all->y + 1e-9), (int)ceil(x + all->x + 1));
 				to_ray_minimap(all, x, y, a, i);
-				dist = sqrt(pow(x, 2) + pow(y / a, 2));
+				printf("2x == %f, y / a == %f\n", x, y/a);
+				dist = distance(all, x, y, a);
 				x = change_x(all, rad, a, x);
 				y = change_y(all, rad, a, y);
 				//printf("new x = %f, y = %f\n", x, y);
@@ -218,7 +222,8 @@ void	every_ray(t_all *all, double rad)
 						floor(y / a + all->y - 1 + 1e-9)][(int)ceil(x + all->x)] == 1)))
 			{
 				to_ray_minimap(all, x, y, a, i);
-				dist = sqrt(pow(x, 2) + pow(y / a, 2));
+				printf("3x == %f, y / a == %f\n", x, y/a);
+				dist = distance(all, x, y, a);
 				x = change_x(all, rad, a, x);
 				y = change_y(all, rad, a, y);
 				//printf("new x = %f, y = %f\n", x, y);
@@ -237,7 +242,8 @@ void	every_ray(t_all *all, double rad)
 						floor(y / a + all->y + 1e-9)][(int)ceil(x + all->x - 1e-9)] == 1)))
 			{
 				to_ray_minimap(all, x, y, a, i);
-				dist = sqrt(pow(x, 2) + pow(y / a, 2));
+				printf("4x == %f, y / a == %f\n", x, y/a);
+				dist = distance(all, x, y, a);
 				x = change_x(all, rad, a, x);
 				y = change_y(all, rad, a, y);
 				//printf("new x = %f, y = %f\n", x, y);
