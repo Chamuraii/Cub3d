@@ -42,22 +42,22 @@ void	draw_pixel_line(t_all *all, double dist, double rad)
 	int		end;
 	int		i;
 
-	pix = HEIGHT / 10 - (dist - 2) * HEIGHT / 100;
-	end = pix * 8;
+	pix = HEIGHT / 10 - (dist - 1) * HEIGHT / 100;
+	end = pix * 9;
 	i = HEIGHT - end;
-	rad += 45;
+	rad = good_angles(all, rad + 45);
 //	printf("------------------------- rad = %f\n", rad);
-//	printf ("drawing a line from %d to %d, for %f m at %f degres (x = %f)\n", i, end, dist, rad, - rad / 45 * WIDTH + WIDTH);
+	printf ("drawing a line from %d to %d, for %f m at %f degres (x = %f)\n", i, end, dist, rad, rad / 45 * WIDTH + WIDTH);
 	while (i < end && i >= 0)
 	{
 		if (rad == 0)
 			mlx_put_pixel(all->background, WIDTH / 2, i, 0x0000ff);
-		else if (rad >= 45)
+		//else if (rad >= 45)
 			mlx_put_pixel(all->background, -rad / 45
 				* WIDTH + WIDTH, i, 0x0000ff);
-		else if (rad < 45)
+/* 		else if (rad < 45)
 			mlx_put_pixel(all->background, rad / 45
-				* WIDTH + WIDTH, i, 0x00ff00);
+				* WIDTH + WIDTH, i, 0x00ff00); */
 		i ++;
 	}
 }
@@ -69,22 +69,22 @@ double	cadran(t_all *all, double rad)
 	if (rad > 0 && rad < 90)
 	{
 		a = 1 / tan(rad * PI / 180);
-		printf ("cad 1\n");
+	//	printf ("cad 1\n");
 	}
 	else if (rad >= 90 && rad < 180)
 	{
 		a = -1 / tan(rad * PI / 180);
-		printf ("cad 2\n");
+	//	printf ("cad 2\n");
 	}
 	else if (rad > 180 && rad < 270)
 	{
 		a = 1 / tan(rad * PI / 180);
-		printf ("cad 3\n");
+	//	printf ("cad 3\n");
 	}
 	else if (rad >= 270 && rad < 360)
 	{
 		a = -1 / tan(rad * PI / 180);
-		printf ("cad 4\n");
+	//	printf ("cad 4\n");
 	}
 	else
 		a = 10;
@@ -95,7 +95,7 @@ double	change_x(t_all *all, double rad, double a, double x)
 {
 	if (a > 1)
 		a = 1 / a;
-	printf("a == %f\n", a);
+	//printf("a == %f\n", a);
 	if (rad + all->z <= 135 && rad + all->z > 45)
 	{
 		x -= a;
@@ -141,17 +141,18 @@ void	to_ray_minimap(t_all *all, double x, double y, double a, int i)
 	if (x + a + all->x > ceil(x + all->x))
 	{
 		all->ray_hits[i][1] = ceil(x + all->x);
-		printf("checking (%d, %d) //\n", (int)floor(x + all->x), (int)ceil(y / a + all->y + 1e-9));
-		printf("so.. %d\n", all->map[(int)floor(y / a + all->y + 1e-9)][(int)ceil(x + all->x)]);
+		//printf("checking (%d, %d) //\n", (int)floor(x + all->x), (int)ceil(y / a + all->y + 1e-9));
+		//printf("so.. %d\n", all->map[(int)floor(y / a + all->y + 1e-9)][(int)ceil(x + all->x)]);
 	}
 	else
 	{
 		all->ray_hits[i][1] = x + all->x;
-		printf("checking (%d, %f) %d//\n", (int)(x + all->x), (y / a + all->y), (int)(y / a + all->y));
-		printf("so.... %d\n", all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]);
+		//printf("checking (%d, %f) %d//\n", (int)(x + all->x), (y / a + all->y), (int)(y / a + all->y));
+		//printf("so.... %d\n", all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]);
 	}
 	//printf("a = %f\n", a);
 }
+
 void	every_ray(t_all *all, double rad)
 {
 	double	x;
@@ -178,12 +179,12 @@ void	every_ray(t_all *all, double rad)
 			{
 			//	printf("(%f, %d)\n", ceil(y / a + all->y), (int)floor(x + all->x - 1));
 				to_ray_minimap(all, x, y, a, i);
+				dist = sqrt(pow(x, 2) + pow(y / a, 2));
 				x = change_x(all, rad, a, x);
 				y = change_y(all, rad, a, y);
 				//printf("new x = %f, y = %f\n", x, y);
 			//	printf("hmmm checking (%f, %f) //... %f\n", (x + all->x), (y / a + all->y), all->lz + rad);
 			}
-			//dist = sqrt(pow(x - change_x(all, rad - 45, a, x), 2) + pow((y / a) - change_y(all, rad - 45, a, y), 2));
 			//draw_pixel_line(all, dist, good_angles(all, rad + all->z - 45));
 			i ++;
 		}
@@ -198,12 +199,12 @@ void	every_ray(t_all *all, double rad)
 			{
 			//	printf("(%d, %d)\n", (int)floor(y / a + all->y + 1e-9), (int)ceil(x + all->x + 1));
 				to_ray_minimap(all, x, y, a, i);
+				dist = sqrt(pow(x, 2) + pow(y / a, 2));
 				x = change_x(all, rad, a, x);
 				y = change_y(all, rad, a, y);
 				//printf("new x = %f, y = %f\n", x, y);
 				//printf("hmmm checking (%f, %f) //... %f\n", (x + all->x), (y / a + all->y), all->lz + rad);
 			}
-			//dist = sqrt(pow(x - change_x(all, rad - 45, a, x), 2) + pow((y / a) - change_y(all, rad - 45, a, y), 2));
 			//draw_pixel_line(all, dist, good_angles(all, rad + all->z - 45));
 			i ++;
 		}
@@ -217,12 +218,12 @@ void	every_ray(t_all *all, double rad)
 						floor(y / a + all->y - 1 + 1e-9)][(int)ceil(x + all->x)] == 1)))
 			{
 				to_ray_minimap(all, x, y, a, i);
+				dist = sqrt(pow(x, 2) + pow(y / a, 2));
 				x = change_x(all, rad, a, x);
 				y = change_y(all, rad, a, y);
 				//printf("new x = %f, y = %f\n", x, y);
 				//printf("hmmm checking (%f, %f) //... %f\n", (x + all->x), (y / a + all->y), all->lz + rad);
 			}
-		//	dist = sqrt(pow(x - change_x(all, rad - 45, a, x), 2) + pow((y / a) - change_y(all, rad - 45, a, y), 2));
 		//	draw_pixel_line(all, dist, good_angles(all, rad + all->z - 45));
 			i ++;
 		}
@@ -236,18 +237,17 @@ void	every_ray(t_all *all, double rad)
 						floor(y / a + all->y + 1e-9)][(int)ceil(x + all->x - 1e-9)] == 1)))
 			{
 				to_ray_minimap(all, x, y, a, i);
+				dist = sqrt(pow(x, 2) + pow(y / a, 2));
 				x = change_x(all, rad, a, x);
 				y = change_y(all, rad, a, y);
 				//printf("new x = %f, y = %f\n", x, y);
 				//printf("hmmm checking (%f, %f) //... %f\n", (x + all->x), (y / a + all->y), all->lz + rad);
 			}
-			//dist = sqrt(pow(x - change_x(all, rad - 45, a, x), 2) + pow((y / a) - change_y(all, rad - 45, a, y), 2));
 		//	draw_pixel_line(all, dist, good_angles(all, rad + all->z - 45));
 			i ++;
 		}
-/* 		dist = sqrt(pow(x - change_x(all, rad - 45, a, x), 2) + pow((y / a) - change_y(all, rad - 45, a, y), 2));
-		draw_pixel_line(all, dist, good_angles(all, rad + all->z - 45)); */
-	//	printf("final %f / %f (%d, %d)\n", x + all->x, y / a + all->y, all->map_width, all->map_height);
+		printf("dist = %f (%f, %f)\n", dist, x, y / a);
+		draw_pixel_line(all, dist, good_angles(all, rad));
 		printf("rad = %f\n", rad + all->lz);
 		rad += 0.5;
 		all->ray_hits[i][0] = -1;
