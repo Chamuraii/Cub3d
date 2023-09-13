@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:25:42 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/06 16:02:37 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/13 14:52:43 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ typedef struct s_all
 	double			y;
 	double			oldx;
 	double			oldy;
-	int			oldchar;
-	double			ray_hits[2048][2];
+	int				oldchar;
+	double			ray_hits[2000][2];
 	double			z;
 	double			hz;
 	double			lz;
