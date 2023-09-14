@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/02 20:21:03 by jorgfern          #+#    #+#             */
-/*   Updated: 2023/09/13 16:04:28 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/14 16:30:57 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	draw_ray_minimap(t_all *all, int start_y, int start_x)
 			sum_x = 1;
 		else
 			sum_x = -1;
-		while ((int)x != (int)ray_x)
+		while ((int)x != (int)ray_x) // segfault here ??
 		{
 			y = (m * x) + n;
 			if (x < (all->map_width * 8) && x >= 0 && y < (all->map_height * 8) && y >= 0 && (int)x < (16 * 16) && (int)y < (16 * 16))
