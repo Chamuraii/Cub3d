@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:25:42 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/13 14:52:43 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/15 14:56:54 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # define PI 3.14159265358979323846
 # define HEIGHT 700
 # define WIDTH 1200
+# define FOV 60
 
 typedef struct s_all
 {

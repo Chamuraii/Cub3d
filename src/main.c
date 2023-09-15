@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/14 16:34:19 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/15 15:33:52 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,16 @@ void	draw_pixel_line(t_all *all, double dist, double rad)
 	int		end;
 	int		wide;
 
+	//dist = dist * fabs(sin((rad + 180) * PI / 180)) * fabs(cos((rad + 180) * PI / 180));
 	end = HEIGHT - dist * HEIGHT / 40;
 	i = HEIGHT - end;
 	rad = good_angles(all, rad);
-	wide = -rad * WIDTH / 90;
+	wide = rad * WIDTH / FOV;
 	if (rad == 0)
-		wide += WIDTH - 1;
-	//printf ("drawing a line from %d to %d, for %f m at %f degres (x = %d)\n", i, end, dist, rad, wide);
-	while (i < end && i > 0)
-		mlx_put_pixel(all->background, wide, i ++, 0xff0000);
+		wide = WIDTH + 1;
+//	printf ("drawing a line from %d to %d, for %f m at %f degres (x = %d)\n", i, end, dist, rad, wide);
+	while (i <= end && i > 0)
+		mlx_put_pixel(all->background, -wide, i ++, 0xff0000);
 }
 
 double	cadran(t_all *all, double rad)
@@ -71,7 +72,8 @@ double	cadran(t_all *all, double rad)
 	//	printf ("cad 4\n");
 	}
 	else
-		a = 10;
+		a = 100;
+	//printf("a = %f\n", a);
 	return (a);
 }
 
@@ -110,18 +112,8 @@ void	to_ray_minimap(t_all *all, double x, double y, double a, int i)
 	//printf("x = %f, y = %f\n", x, y);
 	all->ray_hits[i][0] = y / a + all->y;
 	all->ray_hits[i][1] = x + all->x;
-/* 	if (x + a + all->x > ceil(x + all->x))
-	{ */
-	//	printf("checking (%d, %d) //\n", (int)floor(x + all->x), (int)ceil(y / a + all->y + 1e-9));
-	//	printf("so.. %d\n", all->map[(int)floor(y / a + all->y + 1e-9)][(int)ceil(x + all->x)]);
-// 	}
-//	else
-//	{
-	//	all->ray_hits[i][1] = x + all->x;
-	//	printf("checking (%d, %f) %d//\n", (int)(x + all->x), (y / a + all->y), (int)(y / a + all->y));
+	//	printf("checking (%d, %f) %f//\n", (int)(x + all->x), y / a + all->y, y + all->y);
 	//	printf("so.... %d\n", all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]);
-//	}
-	//printf("a = %f\n", a);
 }
 
 double	distance(t_all *all, double x, double y, double a, double rad)
@@ -129,8 +121,10 @@ double	distance(t_all *all, double x, double y, double a, double rad)
 	double	n;
 	double	m;
 
+	//printf("-- %f\n", rad);
 	n = sqrt(pow(x, 2) + pow(y / a, 2));
-	m = sqrt(pow(x * cos((rad) * PI / 180), 2) + pow((y / a) * sin((rad) * PI / 180), 2));
+	n *= sqrt(pow(fabs(sin((rad + 180) * PI / 180)), 2) + pow(fabs(cos((rad + 180) * PI / 180)), 2));
+//	m = sqrt(pow(x * cos((rad) * PI / 180), 2) + pow((y / a) * sin((rad) * PI / 180), 2));
 //	printf("ddd %f\n", n * sqrt(pow(x * cos((rad) * PI / 180), 2) + pow((y / a) * sin((rad) * PI / 180), 2)));
 	return (n);
 //	return (sqrt(pow(x * fabs(cos(rad * PI / 180)), 2) + pow((y / a) * fabs(sin(rad * PI / 180)), 2)));
@@ -146,7 +140,7 @@ void	every_ray(t_all *all, double rad)
 
 	rad = 0;
 	i = 0;
-	while (rad <= 90)
+	while (rad <= FOV)
 	{
 		x = 0;
 		y = 0;
@@ -157,7 +151,7 @@ void	every_ray(t_all *all, double rad)
 				&& !(all->map[(int)(y / a + all->y + 1e-9)][(int)(x + all->x + 1e-9)] == 1))
 			{
 				to_ray_minimap(all, x, 0, a, i);
-				x = change_x(all, rad, a, x);
+				x = change_x(all, rad + 45 - FOV / 2, a, x);
 				dist = fabs(x);
 			}
 			i ++;
@@ -184,16 +178,16 @@ void	every_ray(t_all *all, double rad)
 				to_ray_minimap(all, x, y, a, i);
 				//printf("4x == %f, y / a == %f\n", x, y/a);
 				dist = distance(all, x, y, a, rad + all->lz);
-				x = change_x(all, rad, a, x);
-				y = change_y(all, rad, a, y);
+				x = change_x(all, rad + 45 - FOV / 2, a, x);
+				y = change_y(all, rad + 45 - FOV / 2, a, y);
 				//printf("hmmm checking (%f, %f) //... %f\n", (x + all->x), (y / a + all->y), all->lz + rad);
 			}
 			i ++;
 		}
 		draw_pixel_line(all, dist, good_angles(all, rad));
-	//	printf("rad = %f\n", rad + all->lz);
-//		rad += 10;
-		rad += 0.05;
+		//printf("rad = %f\n", rad + all->lz);
+		//rad += 5;
+		rad += 0.04;
 		all->ray_hits[i][0] = -1;
 		all->ray_hits[i][1] = -1;
 	}
@@ -206,8 +200,8 @@ void	camera_turn(t_all *all, int i)
 	if (i == 2)
 		all->z += 5;
 	all->z = good_angles(all, all->z);
-	all->hz = all->z + 45;
-	all->lz = all->z - 45;
+	all->hz = all->z + FOV / 2;
+	all->lz = all->z - FOV / 2;
 	all->hz = good_angles(all, all->hz);
 	all->lz = good_angles(all, all->lz);
 }
@@ -254,6 +248,7 @@ int	press_keys(mlx_key_data_t keydata, t_all *all)
 		camera_turn(all, 2);
 	else
 		return (0);
+	printf("%f, %f!!\n", all->x, all->y);
 	ray(all);
 	return (1);
 }
@@ -302,8 +297,8 @@ int	main(int argc, char **argv)
 	else
 		ft_printf ("Map validation successful!\n");
 	all.z = 270;
-	all.lz = 270 - 45;
-	all.hz = 270 + 45;
+	all.lz = 270 - FOV / 2;
+	all.hz = 270 + FOV / 2;
 	all.mlx = mlx_init(WIDTH, HEIGHT, "MLX42", 0);
 	if (all.mlx)
 		mlx_set_window_title(all.mlx, "Cub3d");
