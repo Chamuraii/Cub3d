@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/18 17:41:43 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/19 14:12:08 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,29 @@ void	draw_pixel_line(t_all *all, double dist, double rad)
 	int		wide;
 
 	//dist = dist * fabs(sin((rad + 180) * PI / 180)) * fabs(cos((rad + 180) * PI / 180));
-	end = (HEIGHT - dist * HEIGHT / 50);
-	i = HEIGHT - end;
+	//end = HEIGHT - dist * 13 /* HEIGHT / 50 */;
+	if (dist >= 2)
+	{
+		i = - log(dist / 30) * 140;
+		end = HEIGHT / 2 + i / 2;
+		i = HEIGHT - end;
+	}
+	else
+	{
+		i = (-1.15 * dist + 5) * 140;
+		end = HEIGHT / 2 + i / 2;
+		i = HEIGHT - end;
+		//end = HEIGHT - (dist + 1) * 30 /* HEIGHT / 50 */;
+		//i = HEIGHT - end;
+		printf ("drawing a line from %d to %d, for %f m\n", i, end, dist);
+	}
+	//end = HEIGHT - i;
 	rad = good_angles(all, rad);
 	wide = rad * WIDTH / FOV;
 	if (rad == 0)
 		wide = WIDTH + 1;
 	i += 2;
-//	printf ("drawing a line from %d to %d, for %f m at %f degres (x = %d)\n", i, end, dist, rad, wide);
+	//printf ("drawing a line from %d to %d, for %f m at %f degres (x = %d)\n", i, end, dist, rad, wide);
 	while (i <= end && i > 0)
 		mlx_put_pixel(all->background, -wide, i ++, 0xff0000);
 //	printf("i = %d\n", i);
@@ -216,7 +231,7 @@ void	every_ray(t_all *all, double rad)
 	//	printf("***%f, %f [y %f, a %f] ----- (%d, %d) so : %d\n", x, y / a, y, a, (int)(x + all->x + 1e-9), (int)(y / a + all->y + 1e-9), all->map[(int)(y / a + all->y + 1e-9)][(int)(x + all->x + 1e-9)]);
 	//	printf("rad = %f\n", rad + all->lz);
 		//rad += 1;
-		rad += 0.04;
+		rad += 0.025;
 		all->ray_hits[i][0] = -1;
 		all->ray_hits[i][1] = -1;
 	}
