@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/19 14:12:08 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/19 17:45:33 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void	draw_pixel_line(t_all *all, double dist, double rad)
 		i = - log(dist / 30) * 140;
 		end = HEIGHT / 2 + i / 2;
 		i = HEIGHT - end;
+		//printf ("drawing a line from %d to %d, for %f m\n", i, end, dist);
 	}
 	else
 	{
@@ -50,7 +51,7 @@ void	draw_pixel_line(t_all *all, double dist, double rad)
 		i = HEIGHT - end;
 		//end = HEIGHT - (dist + 1) * 30 /* HEIGHT / 50 */;
 		//i = HEIGHT - end;
-		printf ("drawing a line from %d to %d, for %f m\n", i, end, dist);
+		//printf ("drawing a line from %d to %d, for %f m\n", i, end, dist);
 	}
 	//end = HEIGHT - i;
 	rad = good_angles(all, rad);
@@ -134,29 +135,37 @@ void	to_ray_minimap(t_all *all, double x, double y, double a, int i, double rad)
 //	printf("rad = %f\n", rad);
 	all->ray_hits[i][0] = (y / a + all->y);
 	all->ray_hits[i][1] = x + all->x;
-	////printf("ray to (%f %f)\n", all->ray_hits[i][1], all->ray_hits[i][0]);
-	//if (rad < 315 && rad > 225)
-	//{
-	//	all->ray_hits[i][0] = floor(y / a + all->y);
-		//all->ray_hits[i][1] = (x + all->x);
-		//printf("modified ray to (%f %f)\n", all->ray_hits[i][1], all->ray_hits[i][0]);
-	//}
-/* 	if (all->ray_hits[i][0] == all->y && all->ray_hits[i][1] == all->x)
+	//printf("ray to (%f %f)\n", all->ray_hits[i][1], all->ray_hits[i][0]);
+	if (rad > 225 && rad < 315)
 	{
-		printf("ahhhhh\n");
-		draw_pixel_line(all, 0, rad);
-	} */
+		all->ray_hits[i][0] = floor(y / a + all->y + 1e-9);
+		//printf("mod : %f\n", floor(y / a + all->y + 1e-9));
+		//printf("modified ray to (%f %f)\n", all->ray_hits[i][1], all->ray_hits[i][0]);
+	}
+	else if (rad > 45 && rad < 135)
+	{
+		all->ray_hits[i][0] = ceil(y / a + all->y + 1e-9);
+	//	printf("mod : %f\n", ceil(y / a + all->y + 1e-9));
+		//printf("modified ray to (%f %f)\n", all->ray_hits[i][1], all->ray_hits[i][0]);
+	}
+	else if (rad > 135 && rad < 225)
+	{
+		all->ray_hits[i][1] = ceil(x + all->x + 1e-9);
+		//printf("modified ray to (%f %f)\n", all->ray_hits[i][1], all->ray_hits[i][0]);
+	}
+	else
+		all->ray_hits[i][1] = floor(x + all->x + 1e-9);
 	//	printf("checking (%d, %f) %f//\n", (int)(x + all->x), y / a + all->y, y + all->y);
 	//	printf("so.... %d\n", all->map[(int)floor(y / a + all->y)][(int)floor(x + all->x)]);
 }
 
-double	distance(t_all *all, double x, double y, double a, double rad)
+double	distance(t_all *all, double x, double y, double a, double rad, int i)
 {
 	double	n;
 	double	m;
 
 	//printf("-- %f -> %f\n", all->z - rad, cos(rad * PI / 180));
-	n = sqrt(pow(x, 2) + pow(y / a, 2));
+	n = sqrt(pow(all->ray_hits[i][1] - all->x, 2) + pow(all->ray_hits[i][0] - all->y, 2));
 	n *= (cos((all->z - rad) * PI / 180));
 /* 	if (rad > 225 || rad < 45)
 	else
@@ -216,7 +225,7 @@ void	every_ray(t_all *all, double rad)
 				to_ray_minimap(all, x, y, a, i, good_angles(all, rad + all->lz));
 			//	printf("4x == %f, y / a == %f\n", x, y / a);
 	//			printf("x == %d, y / a == %d\n", (int)(x + all->x + 1e-9), (int)(y / a + all->y + 1e-9));
-				dist = distance(all, x, y, a, rad + all->lz);
+				dist = distance(all, x, y, a, rad + all->lz, i);
 				x = change_x(all, rad + 45 - FOV / 2, a, x);
 			//	printf("       new x = %f -- %f\n", x, ceil(all->x) - all->x);
 	//			printf("       new x = %f\n", x);
@@ -227,13 +236,13 @@ void	every_ray(t_all *all, double rad)
 		}
 		//printf("dist = %f\n", dist);
 	//	printf("x = %f / a = %f / rad = %f\n", x, a, rad);
+		all->ray_hits[i][0] = -1;
+		all->ray_hits[i][1] = -1;
 		draw_pixel_line(all, dist, good_angles(all, rad));
 	//	printf("***%f, %f [y %f, a %f] ----- (%d, %d) so : %d\n", x, y / a, y, a, (int)(x + all->x + 1e-9), (int)(y / a + all->y + 1e-9), all->map[(int)(y / a + all->y + 1e-9)][(int)(x + all->x + 1e-9)]);
 	//	printf("rad = %f\n", rad + all->lz);
-		//rad += 1;
+		//rad += 2;
 		rad += 0.025;
-		all->ray_hits[i][0] = -1;
-		all->ray_hits[i][1] = -1;
 	}
 }
 
