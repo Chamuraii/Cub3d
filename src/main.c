@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/20 17:26:53 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/21 19:22:33 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,7 +196,7 @@ void	every_ray(t_all *all, double rad)
 
 	rad = 0;
 	i = 0;
-	while (rad <= FOV)
+	while (rad <= FOV / 3)
 	{
 		x = 0;
 		y = 0;
@@ -210,9 +210,9 @@ void	every_ray(t_all *all, double rad)
 				x = change_x(all, rad + 45 - FOV / 2, a, x);
 				dist = fabs(x);
 			}
-			i ++;
+			//i ++;
 		}
-		else if (good_angles(all, rad + all->lz) == 90 /* || good_angles(all, rad + all->lz) == 270 */)
+		else if (good_angles(all, rad + all->lz) == 90 || good_angles(all, rad + all->lz) == 270)
 		{
 			while (y + all->y <= all->map_height && y + all->y >= 0
 				&& !(all->map[(int)(y + all->y + 1e-9)][(int)(x + all->x + 1e-9)] == 1))
@@ -221,77 +221,102 @@ void	every_ray(t_all *all, double rad)
 				y ++;
 				dist = fabs(y);
 			}
-			i ++;
+			//i ++;
 		}
 		else
 		{
-			while (x + all->x <= all->map_width && y / a + all->y
-				<= all->map_height && x + all->x >= 0 && y / a + all->y >= 0
-				&& (all->map[(int)(y / a + all->y + 1e-9)][(int)(x + all->x + 1e-9)] != 1))
-				/*  || (x + a + all->x > ceil(x + all->x) && all->map[(int)
-						(y / a + all->y + 1e-9)][(int)ceil(x + all->x)] == 1) */
+			double yy = 1;
+			double xx = 1;
+			int j = 1;
+			all->ray_hits[i][0] = all->y;
+			all->ray_hits[i][1] = all->x;
+			while (x + all->x <= all->map_width && y + all->y
+			<= all->map_height && x + all->x >= 0 && y + all->y >= 0
+			/* && (all->map[(int)(y / a + all->y + 1e-9)][(int)(x + all->x + 1e-9)] != 1) */)
 			{
-				dx = change_x(all, rad + 45 - FOV / 2, a, x);
-				dy = change_y(all, rad + 45 - FOV / 2, a, y);
-				all->ray_hits[i][0] = y / a + all->y;
-				all->ray_hits[i][1] = x + all->x;
-/* 				if (good_angles(all, rad + all->lz) > 180 && good_angles(all, rad + all->lz) < 270)
+				if (tan(good_angles(all, rad + all->lz) * PI / 180) > 1)
 				{
-					printf("%f < %f\n", x + a + all->x, ceil(x) + all->x);
-					if (x + a > ceil(x))
-						all->ray_hits[i][1] = ceil(x + all->x + 1e-9);
-					else if (y - a < floor(y))
-						all->ray_hits[i][0] = floor(y / a + all->y + 1e-9);
+					while (yy / tan(good_angles(all, rad + all->lz) * PI / 180) < j)
+					{
+						xx = yy / tan(good_angles(all, rad + all->lz) * PI / 180);
+						//printf("testingg %f, %f\n", xx, yy);
+						yy ++;
+					}
 				}
-				else if (good_angles(all, rad + all->lz) > 90 && good_angles(all, rad + all->lz) < 180)
+				else if (tan(good_angles(all, rad + all->lz) * PI / 180) > 0)
 				{
-					if (x + a > ceil(x))
-						all->ray_hits[i][1] = ceil(x + all->x + 1e-9);
-					else if (y + a > ceil(y))
-						all->ray_hits[i][0] = ceil(y / a + all->y + 1e-9);
+					while (xx / tan(good_angles(all, rad + all->lz) * PI / 180) < j)
+					{
+						yy = xx / tan(good_angles(all, rad + all->lz) * PI / 180);
+						//printf("testingggg %f, %f .. %f\n", xx, yy, tan(good_angles(all, rad + all->lz) * PI / 180));
+						xx ++;
+					}
 				}
-				else if (good_angles(all, rad + all->lz) > 0 && good_angles(all, rad + all->lz) < 90)
+				else if (tan(good_angles(all, rad + all->lz) * PI / 180) > -1)
 				{
-					if (x - a < floor(x))
-						all->ray_hits[i][1] = floor(x + all->x + 1e-9);
-					else if (y + a > ceil(y))
-						all->ray_hits[i][0] = ceil(y / a + all->y + 1e-9);
+					while (- xx / tan(good_angles(all, rad + all->lz) * PI / 180) < j)
+					{
+						yy = - xx / tan(good_angles(all, rad + all->lz) * PI / 180);
+						//printf("testinggg %f, %f\n", xx, yy);
+						xx ++;
+					}
+				}
+				if (tan(good_angles(all, rad + all->lz) * PI / 180) < -1)
+				{
+					while (- yy / tan(good_angles(all, rad + all->lz) * PI / 180) < j)
+					{
+						xx = - yy / tan(good_angles(all, rad + all->lz) * PI / 180);
+						//printf("testing %f, %f\n", xx, yy);
+						yy ++;
+					}
+				}
+			//	printf("testing %f, %f\n", tan(good_angles(all, rad + all->lz) * PI / 180) * ceil(yy), ceil(yy));
+				if (good_angles(all, rad + all->lz) < 268 && good_angles(all, rad + all->lz) > 182)
+				{
+					all->ray_hits[i][0] = - tan(good_angles(all, rad + all->lz) * PI / 180) * ceil(xx) + all->y;
+					all->ray_hits[i][1] = ceil(xx) + all->x;
+				}
+				else if (good_angles(all, rad + all->lz) < 178 && good_angles(all, rad + all->lz) > 92)
+				{
+					all->ray_hits[i][0] = - tan(good_angles(all, rad + all->lz) * PI / 180) * ceil(xx) + all->y;
+					all->ray_hits[i][1] = ceil(xx) + all->x;
+				}
+				else if (good_angles(all, rad + all->lz) < 88 && good_angles(all, rad + all->lz) > 2)
+				{
+					all->ray_hits[i][0] = tan(good_angles(all, rad + all->lz) * PI / 180) * ceil(xx) + all->y;
+					all->ray_hits[i][1] = - ceil(xx) + all->x;
+				}
+				else if (good_angles(all, rad + all->lz) < 358 && good_angles(all, rad + all->lz) > 272)
+				{
+					all->ray_hits[i][0] = tan(good_angles(all, rad + all->lz) * PI / 180) * ceil(xx) + all->y;
+					all->ray_hits[i][1] = - ceil(xx) + all->x;
 				}
 				else
-				{
-					if (x - a < floor(x))
-						all->ray_hits[i][1] = floor(x + all->x + 1e-9);
-					else if (y - a < floor(y))
-						all->ray_hits[i][0] = floor(y / a + all->y + 1e-9);
-				} */
-			//	printf("ray to (%f %f)\n", all->ray_hits[i][1], all->ray_hits[i][0]);
-				if (good_angles(all, rad + all->lz) > 225 && good_angles(all, rad + all->lz) < 315)
+					break ;
+				y = all->ray_hits[i][0] - all->y;
+				x = all->ray_hits[i][1] - all->x;
+				yy = ceil(yy);
+				j ++;
+				i ++;
+			//	printf("%f + %f < %d / %f + %f < %d\n", x, all->x, all->map_width, y, all->y, all->map_height);
+				dist = distance(all, rad + all->lz, i);
+			printf("ray to (%f %f)\n", all->ray_hits[i][1], all->ray_hits[i][0]);
+/* 				if (good_angles(all, rad + all->lz) > 225 && good_angles(all, rad + all->lz) < 315)
 					all->ray_hits[i][0] = floor(y / a + all->y + 1e-9);
 				else if (good_angles(all, rad + all->lz) > 45 && good_angles(all, rad + all->lz) < 135)
 					all->ray_hits[i][0] = ceil(y / a + all->y + 1e-9);
 				else if (good_angles(all, rad + all->lz) > 135 && good_angles(all, rad + all->lz) < 225)
 					all->ray_hits[i][1] = ceil(x + all->x + 1e-9);
 				else
-					all->ray_hits[i][1] = floor(x + all->x + 1e-9);
-			//	printf("new ray to (%f %f)\n", all->ray_hits[i][1], all->ray_hits[i][0]);
-				//to_ray_minimap(all, x, y, a, i, good_angles(all, rad + all->lz));
-			//	printf("4x == %f, y / a == %f\n", x, y / a);
-	//			printf("x == %d, y / a == %d\n", (int)(x + all->x + 1e-9), (int)(y / a + all->y + 1e-9));
-				dist = distance(all, rad + all->lz, i);
-				x = dx;
-				y = dy;
-				//printf("hmmm checking (%d, %d) //... %f\n", (int)(x + all->x + 1e-9), (int)(y / a + all->y + 1e-9), all->lz + rad);
+					all->ray_hits[i][1] = floor(x + all->x + 1e-9); */
 			}
-			i ++;
 		}
-		//printf("dist = %f\n", dist);
-	//	printf("x = %f / a = %f / rad = %f\n", x, a, rad);
 		all->ray_hits[i][0] = -1;
 		all->ray_hits[i][1] = -1;
 		draw_pixel_line(all, dist, good_angles(all, rad));
 	//	printf("rad = %f\n", rad + all->lz);
-		//rad += 2;
-		rad += 0.025;
+		rad += 2;
+		//rad += 0.025;
 	}
 }
 
