@@ -42,6 +42,12 @@ typedef struct s_all
 	double			z;
 	double			hz;
 	double			lz;
+	double			dist;
+	double			disth;
+	double			distv;
+	double			finalx;
+	double			finaly;
+	int				finald;
 	char			*NO_texture;
 	char			*SO_texture;
 	char			*WE_texture;
