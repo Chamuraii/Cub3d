@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/26 14:49:08 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/26 15:37:58 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,43 +31,24 @@ double	good_angles(t_all *all, double ang)
 
 void	draw_pixel_line(t_all *all, double dist, double rad)
 {
-	int		i;
-	int		end;
-	int		wide;
+	double		i;
+	int			start;
+	int			end;
+	int			wide;
 
-	if (dist > 0)
-		printf("dist %f\n", 1 / dist);
-	if (dist >= 2) // change this
-	{
-		i = -log(dist / 30) * 140;
-		end = HEIGHT / 2 + i / 2;
-		i = HEIGHT - end;
-	}
-	else
-	{
-		i = (-1.15 * dist + 5) * 140;
-		end = HEIGHT / 2 + i / 2;
-		i = HEIGHT - end;
-	}
-	//printf ("drawing a line from %d to %d, for %f m\n", i, end, dist);
+	i = 1 / dist;
+	if (i > 1)
+		i = 1;
+	start = (HEIGHT - HEIGHT * i) / 2;
 	rad = good_angles(all, rad);
 	wide = rad * WIDTH / FOV;
 	if (rad == 0)
-		wide = WIDTH + 1;
-	i += 2;
-	//printf ("drawing a line from %d to %d, for %f m at %f degres (x = %d)\n", i, end, dist, rad, wide);
-	while (i <= end && i > 0)
-		mlx_put_pixel(all->background, -wide, i ++, 0xff0000);
-}
-
-double	distance(t_all *all, double rad, double x, double y)
-{
-	double	n;
-
-	n = sqrt(pow(x - all->x, 2) + pow(y - all->y, 2));
-	//printf("rad %f\n", rad);
-	//n *= (cos((all->z - rad) * PI / 180));
-	return (n);
+		wide = -WIDTH + 1;
+	start += 2;
+	end = HEIGHT - start;
+	//printf ("drawing a line from %d to %d, for %f m at %f degres (x = %d)\n", start, end, dist, rad, wide);
+	while (start <= end && start > 0)
+		mlx_put_pixel(all->background, -wide - 1, start ++, 0xff0000);
 }
 
 int	is_wall_h(t_all *all, int rad, double x, double y)
@@ -79,7 +60,8 @@ int	is_wall_h(t_all *all, int rad, double x, double y)
 	{
 		all->finalyh = y;
 		all->finalxh = x;
-		all->disth = distance(all, rad, all->finalxh, all->finalyh);
+		all->disth = sqrt(pow(x - all->x, 2) + pow(y - all->y, 2))
+			* (cos((all->z - rad) * PI / 180));
 		return (1);
 	}
 	return (0);
@@ -94,7 +76,8 @@ int	is_wall_v(t_all *all, int rad, double x, double y)
 	{
 		all->finalyv = y;
 		all->finalxv = x;
-		all->distv = distance(all, rad, all->finalxv, all->finalyv);
+		all->distv = sqrt(pow(x - all->x, 2) + pow(y - all->y, 2))
+			* (cos((all->z - rad) * PI / 180));
 		return (1);
 	}
 	return (0);
@@ -179,9 +162,9 @@ void	rays(t_all *all)
 	{
 		hor(all, good_angles(all, rad + all->lz));
 		ver(all, good_angles(all, rad + all->lz));
-		rad += 0.04;
 		final(all, i ++);
 		draw_pixel_line(all, all->dist, good_angles(all, rad));
+		rad += 0.04;
 	}
 	all->ray_hits[i][0] = -1;
 	all->ray_hits[i][1] = -1;
