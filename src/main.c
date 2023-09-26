@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/25 17:47:13 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/26 14:49:08 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,9 @@ void	draw_pixel_line(t_all *all, double dist, double rad)
 	int		end;
 	int		wide;
 
-	if (dist >= 2)
+	if (dist > 0)
+		printf("dist %f\n", 1 / dist);
+	if (dist >= 2) // change this
 	{
 		i = -log(dist / 30) * 140;
 		end = HEIGHT / 2 + i / 2;
@@ -63,37 +65,21 @@ double	distance(t_all *all, double rad, double x, double y)
 	double	n;
 
 	n = sqrt(pow(x - all->x, 2) + pow(y - all->y, 2));
-	printf("rad %f\n", rad);
+	//printf("rad %f\n", rad);
 	//n *= (cos((all->z - rad) * PI / 180));
 	return (n);
 }
 
-void	good_rays(t_all *all, int i)
-{
-	all->ray_hits[i][0] = all->finaly;
-	all->ray_hits[i][1] = all->finalx;
-	if (all->ray_hits[i][0] < 0)
-		all->ray_hits[i][0] = 0;
-	if (all->ray_hits[i][0] >= all->map_height)
-		all->ray_hits[i][0] = all->map_height - 0.1;
-	if (all->ray_hits[i][1] < 0)
-		all->ray_hits[i][1] = 0;
-	if (all->ray_hits[i][1] >= all->map_width)
-		all->ray_hits[i][1] = all->map_width - 0.1;
-}
-
 int	is_wall_h(t_all *all, int rad, double x, double y)
 {
+	if (rad > 180)
+		y -= 1e-9;
 	if (y <= 0 || y >= all->map_height || x <= 0 || x >= all->map_width
 		|| all->map[(int)y][(int)x] == 1)
 	{
-		if (rad < 180)
-			y = (int)y;
-		else
-			y ++;
 		all->finalyh = y;
 		all->finalxh = x;
-		all->disth = distance(all, rad, x, y);
+		all->disth = distance(all, rad, all->finalxh, all->finalyh);
 		return (1);
 	}
 	return (0);
@@ -101,16 +87,14 @@ int	is_wall_h(t_all *all, int rad, double x, double y)
 
 int	is_wall_v(t_all *all, int rad, double x, double y)
 {
+	if (rad > 270 || rad < 90)
+		x -= 1e-9;
 	if (y <= 0 || y >= all->map_height || x <= 0 || x >= all->map_width
 		|| all->map[(int)y][(int)x] == 1)
 	{
-		if (rad < 270 && rad > 90)
-			x = (int)x;
-		else
-			x ++;
 		all->finalyv = y;
 		all->finalxv = x;
-		all->distv = distance(all, rad, x, y);
+		all->distv = distance(all, rad, all->finalxv, all->finalyv);
 		return (1);
 	}
 	return (0);
@@ -127,14 +111,11 @@ void	ver(t_all *all, double rad)
 	{
 		if (rad == 0 || rad == 90 || rad == 180 || rad == 270)
 			rad += 0.2;
-		x = floor(all->x + o);
+		x = floor(all->x - o);
 		if (rad < 270 && rad > 90)
 			x = ceil(all->x + o);
 		y = all->y - tan(good_angles(all, rad - 180) * PI / 180) * (x - all->x);
-	//	printf("vxy= %f, %f\n", x, y);
-		o --;
-		if (rad < 270 && rad > 90)
-			o += 2;
+		o ++;
 		if (is_wall_v(all, rad, x, y) || y > all->map_height)
 			break ;
 	}
@@ -151,14 +132,11 @@ void	hor(t_all *all, double rad)
 	{
 		if (rad == 0 || rad == 90 || rad == 180 || rad == 270)
 			rad += 0.2;
-		y = floor(all->y + o);
+		y = floor(all->y - o);
 		if (rad < 180)
 			y = ceil(all->y + o);
 		x = all->x + tan(good_angles(all, rad - 90) * PI / 180) * (y - all->y);
-	//	printf("hxy %f %f\n", x, y);
-		o --;
-		if (rad < 180)
-			o += 2;
+		o ++;
 		if (is_wall_h(all, rad, x, y) || x > all->map_width)
 			break ;
 	}
@@ -169,17 +147,24 @@ void	final(t_all *all, int i)
 	all->dist = all->disth;
 	all->finalx = all->finalxh;
 	all->finaly = all->finalyh;
-	all->finald = 0;
+	all->dir = 0;
 	if (all->disth > all->distv)
 	{
 		all->dist = all->distv;
 		all->finalx = all->finalxv;
 		all->finaly = all->finalyv;
-		all->finald = 1;
+		all->dir = 1;
 	}
-	printf("final %f,%f = %d\n", all->finalx, all->finaly, all->finald);
-	all->ray_hits[i][1] = all->finaly;
-	all->ray_hits[i][0] = all->finalx;
+	all->ray_hits[i][0] = all->finaly;
+	all->ray_hits[i][1] = all->finalx;
+	if (all->ray_hits[i][0] < 0)
+		all->ray_hits[i][0] = 0;
+	if (all->ray_hits[i][1] < 0)
+		all->ray_hits[i][1] = 0;
+	if (all->ray_hits[i][0] >= all->map_height)
+		all->ray_hits[i][0] = all->map_height - 0.1;
+	if (all->ray_hits[i][1] >= all->map_width)
+		all->ray_hits[i][1] = all->map_width - 0.1;
 }
 
 void	rays(t_all *all)
@@ -189,22 +174,18 @@ void	rays(t_all *all)
 
 	rad = 0;
 	i = 0;
+	sky_floor(all);
 	while (rad <= FOV)
 	{
 		hor(all, good_angles(all, rad + all->lz));
 		ver(all, good_angles(all, rad + all->lz));
-		printf("distv = %f (%f, %f)\n", all->distv, all->finalxv, all->finalyv);
-		printf("disth = %f (%f, %f)\n", all->disth, all->finalxh, all->finalyh);
 		rad += 0.04;
-		//rad += 5;
-		final(all, i);
-		good_rays(all, i);
-		i ++;
-		printf("FINAL dist = %f\n", all->dist);
+		final(all, i ++);
 		draw_pixel_line(all, all->dist, good_angles(all, rad));
 	}
 	all->ray_hits[i][0] = -1;
 	all->ray_hits[i][1] = -1;
+	draw_minimap(all);
 }
 
 void	camera_turn(t_all *all, int i)
@@ -212,13 +193,6 @@ void	camera_turn(t_all *all, int i)
 	all->z = good_angles(all, all->z + CAM_SPEED * i);
 	all->hz = good_angles(all, all->z + FOV / 2);
 	all->lz = good_angles(all, all->z - FOV / 2);
-}
-
-void	ray(t_all *all)
-{
-	sky_floor(all);
-	rays(all);
-	draw_minimap(all);
 }
 
 int	press_keys(mlx_key_data_t keydata, t_all *all)
@@ -257,8 +231,7 @@ int	press_keys(mlx_key_data_t keydata, t_all *all)
 		camera_turn(all, 1);
 	else
 		return (0);
-	printf("%f, %f!!\n", all->x, all->y);
-	ray(all);
+	rays(all);
 	return (1);
 }
 
@@ -313,8 +286,7 @@ int	main(int argc, char **argv)
 	all.z = START_ANGLE;
 	all.lz = START_ANGLE - FOV / 2;
 	all.hz = START_ANGLE + FOV / 2;
-	ray(&all);
-//	printf ("starting at (%f, %f)\n", all.x, all.y);
+	rays(&all);
 	mlx_key_hook(all.mlx, &my_hook, ((void *)&all));
 	mlx_loop(all.mlx);
 	mlx_terminate(all.mlx);
