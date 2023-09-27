@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:25:42 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/26 15:20:50 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/27 16:11:42 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,22 +36,14 @@ typedef struct s_all
 	mlx_texture_t	*texture;
 	double			x;
 	double			y;
+	double			z;
 	double			oldx;
 	double			oldy;
 	int				oldchar;
 	double			ray_hits[2000][2];
-	double			z;
-	double			hz;
-	double			lz;
-	double			dist;
-	double			disth;
-	double			distv;
-	double			finalx;
-	double			finalxh;
-	double			finalxv;
-	double			finaly;
-	double			finalyh;
-	double			finalyv;
+	double			dist[3];
+	double			finalx[3];
+	double			finaly[3];
 	int				dir;
 	char			*NO_texture;
 	char			*SO_texture;

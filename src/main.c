@@ -6,11 +6,14 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/26 15:37:58 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/27 16:27:34 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/cub3d.h"
+
+// pb of corner if round player coordinates (top left corner disappears)
+// really rare go through diagonal ray in middle of corner
 
 void	sky_floor(t_all *all);
 
@@ -36,17 +39,17 @@ void	draw_pixel_line(t_all *all, double dist, double rad)
 	int			end;
 	int			wide;
 
-	i = 1 / dist;
-	if (i > 1)
+	if (dist < 1)
 		i = 1;
+	else
+		i = 1 / dist;
 	start = (HEIGHT - HEIGHT * i) / 2;
 	rad = good_angles(all, rad);
 	wide = rad * WIDTH / FOV;
 	if (rad == 0)
 		wide = -WIDTH + 1;
-	start += 2;
+	start ++;
 	end = HEIGHT - start;
-	//printf ("drawing a line from %d to %d, for %f m at %f degres (x = %d)\n", start, end, dist, rad, wide);
 	while (start <= end && start > 0)
 		mlx_put_pixel(all->background, -wide - 1, start ++, 0xff0000);
 }
@@ -58,9 +61,9 @@ int	is_wall_h(t_all *all, int rad, double x, double y)
 	if (y <= 0 || y >= all->map_height || x <= 0 || x >= all->map_width
 		|| all->map[(int)y][(int)x] == 1)
 	{
-		all->finalyh = y;
-		all->finalxh = x;
-		all->disth = sqrt(pow(x - all->x, 2) + pow(y - all->y, 2))
+		all->finaly[1] = y;
+		all->finalx[1] = x;
+		all->dist[1] = sqrt(pow(x - all->x, 2) + pow(y - all->y, 2))
 			* (cos((all->z - rad) * PI / 180));
 		return (1);
 	}
@@ -74,9 +77,9 @@ int	is_wall_v(t_all *all, int rad, double x, double y)
 	if (y <= 0 || y >= all->map_height || x <= 0 || x >= all->map_width
 		|| all->map[(int)y][(int)x] == 1)
 	{
-		all->finalyv = y;
-		all->finalxv = x;
-		all->distv = sqrt(pow(x - all->x, 2) + pow(y - all->y, 2))
+		all->finaly[2] = y;
+		all->finalx[2] = x;
+		all->dist[2] = sqrt(pow(x - all->x, 2) + pow(y - all->y, 2))
 			* (cos((all->z - rad) * PI / 180));
 		return (1);
 	}
@@ -127,19 +130,19 @@ void	hor(t_all *all, double rad)
 
 void	final(t_all *all, int i)
 {
-	all->dist = all->disth;
-	all->finalx = all->finalxh;
-	all->finaly = all->finalyh;
+	all->dist[0] = all->dist[1];
+	all->finalx[0] = all->finalx[1];
+	all->finaly[0] = all->finaly[1];
 	all->dir = 0;
-	if (all->disth > all->distv)
+	if (all->dist[1] > all->dist[2])
 	{
-		all->dist = all->distv;
-		all->finalx = all->finalxv;
-		all->finaly = all->finalyv;
+		all->dist[0] = all->dist[2];
+		all->finalx[0] = all->finalx[2];
+		all->finaly[0] = all->finaly[2];
 		all->dir = 1;
 	}
-	all->ray_hits[i][0] = all->finaly;
-	all->ray_hits[i][1] = all->finalx;
+	all->ray_hits[i][0] = all->finaly[0];
+	all->ray_hits[i][1] = all->finalx[0];
 	if (all->ray_hits[i][0] < 0)
 		all->ray_hits[i][0] = 0;
 	if (all->ray_hits[i][1] < 0)
@@ -160,10 +163,10 @@ void	rays(t_all *all)
 	sky_floor(all);
 	while (rad <= FOV)
 	{
-		hor(all, good_angles(all, rad + all->lz));
-		ver(all, good_angles(all, rad + all->lz));
+		hor(all, good_angles(all, rad + all->z - FOV / 2));
+		ver(all, good_angles(all, rad + all->z - FOV / 2));
 		final(all, i ++);
-		draw_pixel_line(all, all->dist, good_angles(all, rad));
+		draw_pixel_line(all, all->dist[0], good_angles(all, rad));
 		rad += 0.04;
 	}
 	all->ray_hits[i][0] = -1;
@@ -171,51 +174,29 @@ void	rays(t_all *all)
 	draw_minimap(all);
 }
 
-void	camera_turn(t_all *all, int i)
+int	diag_jump(t_all *all, int x, int y)
 {
-	all->z = good_angles(all, all->z + CAM_SPEED * i);
-	all->hz = good_angles(all, all->z + FOV / 2);
-	all->lz = good_angles(all, all->z - FOV / 2);
+	x -= (int)all->x;
+	y -= (int)all->y;
+	if ((x == 1 && y == 1 || x == -1 && y == -1)
+		&& all->map[(int)all->y][(int)all->x + x] == 1
+		&& all->map[(int)all->y + y][(int)all->x] == 1)
+		return (0);
+	if ((x == -1 && y == 1 || x == 1 && y == -1)
+		&& all->map[(int)all->y][(int)all->x + x] == 1
+		&& all->map[(int)all->y - y][(int)all->x] == 1)
+		return (0);
+	return (1);
 }
 
-int	press_keys(mlx_key_data_t keydata, t_all *all)
+void	move_player(t_all *all, double x, double y)
 {
-	if (mlx_is_key_down(all->mlx, MLX_KEY_W)
-		&& all->map[(int)floor(all->y + (sin(all->z * PI / 180)))]
-		[(int)floor(all->x - (cos(all->z * PI / 180)))] != 1)
+	if (all->map[(int)floor(all->y + y)][(int)floor(all->x + x)] != 1
+		&& diag_jump(all, all->x + x, all->y + y))
 	{
-		all->x -= cos(all->z * PI / 180);
-		all->y += sin(all->z * PI / 180);
+		all->x += x;
+		all->y += y;
 	}
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_S)
-		&& all->map[(int)floor(all->y - (sin(all->z * PI / 180)))]
-		[(int)floor(all->x + (cos(all->z * PI / 180)))] != 1)
-	{
-		all->x += cos(all->z * PI / 180);
-		all->y -= sin(all->z * PI / 180);
-	}
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_A)
-		&& all->map[(int)floor(all->y - (sin((all->z - 90) * PI / 180)))]
-		[(int)floor(all->x + (cos((all->z - 90) * PI / 180)))] != 1)
-	{
-		all->x += cos((all->z - 90) * PI / 180);
-		all->y -= sin((all->z - 90) * PI / 180);
-	}
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_D)
-		&& all->map[(int)floor(all->y - (sin((all->z + 90) * PI / 180)))]
-		[(int)floor(all->x + (cos((all->z + 90) * PI / 180)))] != 1)
-	{
-		all->x += cos((all->z + 90) * PI / 180);
-		all->y -= sin((all->z + 90) * PI / 180);
-	}
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_RIGHT))
-		camera_turn(all, -1);
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_LEFT))
-		camera_turn(all, 1);
-	else
-		return (0);
-	rays(all);
-	return (1);
 }
 
 void	my_hook(mlx_key_data_t keydata, void *param)
@@ -225,7 +206,21 @@ void	my_hook(mlx_key_data_t keydata, void *param)
 	all = (t_all *)param;
 	if (mlx_is_key_down(all->mlx, MLX_KEY_ESCAPE))
 		ft_exit("BYE <3", 1);
-	press_keys(keydata, all);
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_W))
+		move_player(all, -cos(all->z * PI / 180), sin(all->z * PI / 180));
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_S))
+		move_player(all, cos(all->z * PI / 180), -sin(all->z * PI / 180));
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_A))
+		move_player(all, cos((all->z - 90) * PI / 180),
+			-sin((all->z - 90) * PI / 180));
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_D))
+		move_player(all, cos((all->z + 90) * PI / 180),
+			-sin((all->z + 90) * PI / 180));
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_RIGHT))
+		all->z = good_angles(all, all->z - CAM_SPEED);
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_LEFT))
+		all->z = good_angles(all, all->z + CAM_SPEED);
+	rays(all);
 }
 
 void	sky_floor(t_all *all)
@@ -257,18 +252,14 @@ int	main(int argc, char **argv)
 	parser_init(&all);
 	if (!main_validator(&all, argv, argc))
 		return (ft_printf ("Error\n"), -1);
-	else
-		ft_printf ("Map validation successful!\n");
+	ft_printf ("Map validation successful!\n");
 	all.mlx = mlx_init(WIDTH, HEIGHT, "MLX42", 0);
-	if (all.mlx)
-		mlx_set_window_title(all.mlx, "Cub3d");
-	else
+	if (!all.mlx)
 		ft_exit("error\n-MLX PROBLEM-", -1);
+	mlx_set_window_title(all.mlx, "Cub3d");
 	all.background = mlx_new_image(all.mlx, WIDTH, HEIGHT);
 	mlx_image_to_window(all.mlx, all.background, 0, 0);
 	all.z = START_ANGLE;
-	all.lz = START_ANGLE - FOV / 2;
-	all.hz = START_ANGLE + FOV / 2;
 	rays(&all);
 	mlx_key_hook(all.mlx, &my_hook, ((void *)&all));
 	mlx_loop(all.mlx);
