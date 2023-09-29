@@ -3,12 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 18:52:34 by jorgfern          #+#    #+#             */
-/*   Updated: 2023/09/06 16:04:48 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/28 15:08:22 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+// TODO
+//  Fix floodfill
+//  Make colors module for 255
+//
 
 #include "../include/cub3d.h"
 
@@ -31,6 +36,8 @@ void	parser_init(t_all *all)
 	all->x = 0;
 	all->y = 0;
 	all->oldchar = 0;
+
+	all->mouse_flag = 0;
 }
 
 char	*get_next_line_no_nl(int fd)
@@ -47,20 +54,16 @@ char	*get_next_line_no_nl(int fd)
 
 int	texture_map_validator(t_all *all, char *str, int step)
 {
-	int	i;
-	int	j;
+	char	*ext;
+	int		j;
 
 	j = 2;
 	while (ft_isspace(str[j]))
 		++j;
 	if (j == 2)
 		return (0);
-	i = ft_strlen(str);
-	if (i >= 5 + j)
-		while (--i > 0)
-			if (str[i] == '.')
-				break ;
-	if (i > 5 + j && (!ft_strcmp(str + i, ".png") || !ft_strcmp(str + i, ".xmp")))
+	ext = ft_strrchr(str, '.');
+	if ((!ft_strncmp(str, "NO", 2) || !ft_strncmp(str, "WE", 2) || !ft_strncmp(str, "SO", 2) || !ft_strncmp(str, "EA", 2)) && !ft_strcmp(ext, ".png"))
 	{
 		if (step == 0)
 		{
@@ -125,9 +128,9 @@ int	rgb_validator(t_all *all, char *str, int boole)
 	while (str[i])
 	{
 		if (boole == 0)
-			all->floor_color[j++] = ft_atoi(str + i);
+			all->floor_color[j++] = (ft_atoi(str + i) % 256);
 		else
-			all->ceiling_color[j++] = ft_atoi(str + i);
+			all->ceiling_color[j++] = (ft_atoi(str + i) % 256);
 		while (str[i] && ft_isdigit(str[i]))
 			++i;
 		if (str[i] == ',')
@@ -189,7 +192,7 @@ char	**map_copy(t_all *all, char **matrix, int height)
 
 void	flood_fill(t_all *all, char **map, int y, int x)
 {
-	if (x == 0 || x == all->map_width || y == 0 || y == all->map_height - 1 || map[y][x] == '1' || map[y][x] == 'F')
+	if (x < 0 || x == all->map_width || y < 0 || y == all->map_height || map[y][x] == '1' || map[y][x] == 'F')
 		return ;
 	map[y][x] = 'F';
 	flood_fill(all, map, y + 1, x);
@@ -245,12 +248,20 @@ int	map_validator(t_all *all, char **str, int fd)
 		i = 0;
 		while (str[0][i])
 		{
-			if (str[0][i] != '0' && str[0][i] != '1' && str[0][i] != 'N' && str[0][i] != 'D' && !ft_isspace(str[0][i]))
+			if (str[0][i] != '0' && str[0][i] != '1' && str[0][i] != 'N' && str[0][i] != 'S' && str[0][i] != 'E' && str[0][i] != 'W' && str[0][i] != 'D' && !ft_isspace(str[0][i]))
 				return (0);
-			if (str[0][i] == 'N')
+			if (str[0][i] == 'N' || str[0][i] == 'W' || str[0][i] == 'S' || str[0][i] == 'E' || str[0][i] == 'D')
 			{
 				if (player_count)
 					return (0);
+				if (str[0][i] == 'N')
+					all->z = 270;
+				else if (str[0][i] == 'W')
+					all->z = 0;
+				else if (str[0][i] == 'S')
+					all->z = 90;
+				else if (str[0][i] == 'E')
+					all->z = 180;
 				all->y = j;
 				all->x = i;
 				all->oldy = j;
@@ -366,7 +377,6 @@ void	parse_map(t_all *all)
 
 int	main_validator(t_all *all, char **argv, int argc)
 {
-	int		i;
 	int		fd;
 	char	*str;
 
@@ -374,12 +384,7 @@ int	main_validator(t_all *all, char **argv, int argc)
 		return (0);
 	str = 0;
 	fd = 0;
-	i = ft_strlen(argv[1]);
-	if (i >= 5)
-		while (--i > 0)
-			if (argv[1][i] == '.')
-				break ;
-	if (i > 0 && !ft_strcmp(argv[1] + i, ".cub"))
+	if (!ft_strcmp(ft_strrchr(argv[1], '.'), ".cub"))
 	{
 		if (!cub_validator(all, argv, fd, &str))
 			return (0);

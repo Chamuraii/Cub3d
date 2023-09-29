@@ -3,12 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   minimap.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jorgfern <jorgfern@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/02 20:21:03 by jorgfern          #+#    #+#             */
-/*   Updated: 2023/09/14 16:30:57 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/09/28 15:07:32 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+// TODO
+//  Fix Y >= 8 breaking map
 
 #include "../include/cub3d.h"
 
@@ -27,12 +30,12 @@ void	update_player_pos(t_all *all)
 
 
 
-void	draw_ray_minimap(t_all *all, int start_y, int start_x)
+void	draw_ray_minimap(t_all *all, int start_y, int start_x, int offset[2])
 {
 	double	m;
 	double n;
-	double y = (all->y * 8) - (start_y * 8);
-	double x = all->x * 8;
+	double y;
+	double x;
 	double ray_y;
 	double	ray_x;
 	double sum_x;
@@ -41,16 +44,16 @@ void	draw_ray_minimap(t_all *all, int start_y, int start_x)
 	for (int i = 0; all->ray_hits[i][0] != -1; i++)
 	{
 		x = (all->x * 8) - (start_x * 8);
-		ray_y = (all->ray_hits[i][0] * 8) - (start_y * 8);
+		ray_y = (all->ray_hits[i][0] * 8);
 		ray_x = (all->ray_hits[i][1] * 8) - (start_x * 8);
-		m = ((ray_y) - (all->y * 8) - (start_y * 8)) / ((ray_x) - x);
+		m = ((ray_y) - (all->y * 8)) / ((ray_x) - x);
 		n = ((((all->y * 8) - (start_y * 8)) - (m * x)));
 
 		if (x < ray_x)
 			sum_x = 1;
 		else
 			sum_x = -1;
-		while ((int)x != (int)ray_x) // segfault here ??
+		while ((int)x != (int)ray_x)
 		{
 			y = (m * x) + n;
 			if (x < (all->map_width * 8) && x >= 0 && y < (all->map_height * 8) && y >= 0 && (int)x < (16 * 16) && (int)y < (16 * 16))
@@ -61,7 +64,7 @@ void	draw_ray_minimap(t_all *all, int start_y, int start_x)
 		x = (all->x * 8) - (start_x * 8);
 		ray_y = (all->ray_hits[i][0] * 8) - (start_y * 8);
 		ray_x = (all->ray_hits[i][1] * 8) - (start_x * 8);
-		m = ((ray_y) - (all->y * 8) - (start_y * 8)) / ((ray_x) - x);
+		m = ((ray_y) - y) / ((ray_x) - x);
 		n = ((((all->y * 8) - (start_y * 8)) - (m * x)));
 		if (y < ray_y)
 			sum_y = 1;
@@ -76,7 +79,6 @@ void	draw_ray_minimap(t_all *all, int start_y, int start_x)
 		}
 
 	}
-
 }
 
 void	draw_minimap(t_all *all)
@@ -92,6 +94,7 @@ void	draw_minimap(t_all *all)
 	int start_offset_y;
 	int start_offset_x;
 	int player_dist = 16;
+	int offsets[2];
 
 	update_player_pos(all);
 	y = (int)round(all->y) - 16;
@@ -122,7 +125,7 @@ void	draw_minimap(t_all *all)
 			player_dist = -((int)round(all->x) - (int)all->map_width);
 		while (x < (int)round(all->x) + player_dist + x_offset_l && x < all->map_width)
 		{
-			if (all->map[y][x] == 0)
+			if (all->map[y][x] == 0 || all->map[y][x] == 2)
 			{
 				for (i = y * 8; i < (y * 8) + 8; ++i)
 				{
@@ -138,17 +141,17 @@ void	draw_minimap(t_all *all)
 						mlx_put_pixel(all->background, j - (start_offset_x * 8), i - (start_offset_y * 8), 0x000000ff);
 				}
 			}
-			else if (all->map[y][x] == 2)
+			if (all->map[y][x] == 2)
 			{
-				for (i = y * 8; i < (y * 8) + 8; ++i)
+				for (i = y * 8; i < (y * 8) + 4; ++i)
 				{
-					for (j = x * 8; j < (x * 8) + 8; ++j)
-						mlx_put_pixel(all->background, j - (start_offset_x * 8), i - (start_offset_y * 8), 0xff0000ff);
+					for (j = x * 8; j < (x * 8) + 4; ++j)
+						mlx_put_pixel(all->background, j + (int)((all->x * 8) - ((int)all->x * 8) - 2) - (start_offset_x * 8), i + (int)((all->y * 8) - ((int)all->y * 8) - 2) - (start_offset_y * 8), 0xff0000ff);
 				}
 			}
 			x++;
 		}
 		y++;
 	}
-	draw_ray_minimap(all, start_offset_y, start_offset_x);
+	draw_ray_minimap(all, start_offset_y, start_offset_x, offsets);
 }

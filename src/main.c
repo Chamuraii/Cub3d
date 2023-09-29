@@ -199,27 +199,54 @@ void	move_player(t_all *all, double x, double y)
 	}
 }
 
-void	my_hook(mlx_key_data_t keydata, void *param)
+void	my_hook(void *param)
 {
 	t_all	*all;
+	static int counter;
 
 	all = (t_all *)param;
-	if (mlx_is_key_down(all->mlx, MLX_KEY_ESCAPE))
+	if (mlx_is_key_down(all->mlx, MLX_KEY_ESCAPE)) {
 		ft_exit("BYE <3", 1);
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_W))
-		move_player(all, -cos(all->z * PI / 180), sin(all->z * PI / 180));
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_S))
-		move_player(all, cos(all->z * PI / 180), -sin(all->z * PI / 180));
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_A))
-		move_player(all, cos((all->z - 90) * PI / 180),
-			-sin((all->z - 90) * PI / 180));
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_D))
-		move_player(all, cos((all->z + 90) * PI / 180),
-			-sin((all->z + 90) * PI / 180));
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_RIGHT))
+	}
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_W)) {
+		move_player(all, (-cos(all->z * PI / 180)) / 30, (sin(all->z * PI / 180)) / 30);
+	}
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_S)) {
+		move_player(all, (cos(all->z * PI / 180)) / 30, (-sin(all->z * PI / 180)) / 30);
+	}
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_A)) {
+		move_player(all, (cos((all->z - 90) * PI / 180)) / 30,
+					(-sin((all->z - 90) * PI / 180)) / 30);
+	}
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_D)) {
+		move_player(all, (cos((all->z + 90) * PI / 180)) / 30,
+					(-sin((all->z + 90) * PI / 180)) / 30);
+	}
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_RIGHT)) {
 		all->z = good_angles(all, all->z - CAM_SPEED);
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_LEFT))
+	}
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_LEFT)) {
 		all->z = good_angles(all, all->z + CAM_SPEED);
+	}
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_L)) {
+		if (!all->mouse_flag) {
+			all->mouse_flag = 1;
+		} else {
+			all->mouse_flag = 0;
+		}
+		mlx_set_cursor_mode(all->mlx, MLX_MOUSE_HIDDEN);
+	}
+	if (all->mouse_flag)
+	{
+		if (counter == 2)
+		{
+			mlx_set_mouse_pos( all->mlx, WIDTH / 2, HEIGHT / 2);
+			counter = 0;
+		}
+		++counter;
+		mlx_get_mouse_pos( all->mlx, &(all->mouse_x_pos), &(all->mouse_y_pos));
+		all->z = good_angles(all, all->z - ((all->mouse_x_pos - (WIDTH / 2)) / 10));
+	}
 	rays(all);
 }
 
@@ -259,9 +286,8 @@ int	main(int argc, char **argv)
 	mlx_set_window_title(all.mlx, "Cub3d");
 	all.background = mlx_new_image(all.mlx, WIDTH, HEIGHT);
 	mlx_image_to_window(all.mlx, all.background, 0, 0);
-	all.z = START_ANGLE;
 	rays(&all);
-	mlx_key_hook(all.mlx, &my_hook, ((void *)&all));
+	mlx_loop_hook(all.mlx, my_hook, ((void *)&all));
 	mlx_loop(all.mlx);
 	mlx_terminate(all.mlx);
 	return (0);

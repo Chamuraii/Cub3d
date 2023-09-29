@@ -17,16 +17,18 @@
 # include <stdio.h>
 # include <unistd.h>
 # include <math.h>
-# include "../MLX42/include/MLX42/MLX42.h"
 # include <fcntl.h>
 # include "../libft/libft.h"
+# include "../MLX42/include/MLX42/MLX42.h"
+# include <math.h>
+# include <GLFW/glfw3.h>
 
 # define PI 3.14159265358979323846
 # define HEIGHT 700
 # define WIDTH 1050
 # define FOV 45
 # define START_ANGLE 270
-# define CAM_SPEED 5
+# define CAM_SPEED 1.5
 
 typedef struct s_all
 {
@@ -58,6 +60,10 @@ typedef struct s_all
 	int				**map;
 	unsigned int	i;
 	unsigned int	j;
+
+	int32_t	mouse_x_pos;
+	int32_t	mouse_y_pos;
+	uint32_t	mouse_flag;
 }			t_all;
 
 int		main_validator(t_all *all, char **argv, int argc);
