@@ -36,6 +36,10 @@ void	parser_init(t_all *all)
 	all->x = 0;
 	all->y = 0;
 	all->oldchar = 0;
+	all->ray_num = 0;
+	all->texture_counter = 0;
+	all->gun_img = 0;
+	all->gun_bool = 0;
 
 	all->mouse_flag = 0;
 }
@@ -250,7 +254,7 @@ int	map_validator(t_all *all, char **str, int fd)
 		{
 			if (str[0][i] != '0' && str[0][i] != '1' && str[0][i] != 'N' && str[0][i] != 'S' && str[0][i] != 'E' && str[0][i] != 'W' && str[0][i] != 'D' && !ft_isspace(str[0][i]))
 				return (0);
-			if (str[0][i] == 'N' || str[0][i] == 'W' || str[0][i] == 'S' || str[0][i] == 'E' || str[0][i] == 'D')
+			if (str[0][i] == 'N' || str[0][i] == 'W' || str[0][i] == 'S' || str[0][i] == 'E')
 			{
 				if (player_count)
 					return (0);
@@ -365,7 +369,7 @@ void	parse_map(t_all *all)
 				all->map[i][j] = 0;
 			else if (all->map_char[i][j] == '1')
 				all->map[i][j] = 1;
-			else if (all->map_char[i][j] == 'N')
+			else if (all->map_char[i][j] == 'N' || all->map_char[i][j] == 'W' || all->map_char[i][j] == 'S' || all->map_char[i][j] == 'E')
 				all->map[i][j] = 2;
 			else
 				all->map[i][j] = 3;

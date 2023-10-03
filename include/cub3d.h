@@ -20,14 +20,11 @@
 # include <fcntl.h>
 # include "../libft/libft.h"
 # include "../MLX42/include/MLX42/MLX42.h"
-# include <math.h>
-# include <GLFW/glfw3.h>
 
 # define PI 3.14159265358979323846
 # define HEIGHT 700
 # define WIDTH 1050
 # define FOV 45
-# define START_ANGLE 270
 # define CAM_SPEED 1.5
 
 typedef struct s_all
@@ -35,14 +32,22 @@ typedef struct s_all
 	mlx_t			*mlx;
 	mlx_image_t		*g_img;
 	mlx_image_t		*background;
+	mlx_image_t		*gun_img;
+	mlx_texture_t	*gun[16];
+	int 			gun_bool;
 	mlx_texture_t	*texture;
+	mlx_texture_t	*north;
+	mlx_texture_t	*east;
+	mlx_texture_t	*south;
+	mlx_texture_t	*west;
 	double			x;
 	double			y;
 	double			z;
 	double			oldx;
 	double			oldy;
 	int				oldchar;
-	double			ray_hits[2000][2];
+	double			ray_hits[88000][2];
+	unsigned int	ray_num;
 	double			dist[3];
 	double			finalx[3];
 	double			finaly[3];
@@ -60,6 +65,7 @@ typedef struct s_all
 	int				**map;
 	unsigned int	i;
 	unsigned int	j;
+	unsigned int	texture_counter;
 
 	int32_t	mouse_x_pos;
 	int32_t	mouse_y_pos;
@@ -70,5 +76,10 @@ int		main_validator(t_all *all, char **argv, int argc);
 void	parser_init(t_all *all);
 void	ft_free(t_all *all);
 void	draw_minimap(t_all *all);
+unsigned int		get_pixel_color(t_all *all, unsigned int y, double range, unsigned int end);
+int					get_textures(t_all *all);
+void				gun(t_all *all);
+unsigned int get_rgba(uint8_t *pixels, unsigned int width, unsigned int y, double x);
+void	start_gun(t_all *all);
 
 #endif

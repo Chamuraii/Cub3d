@@ -51,7 +51,11 @@ void	draw_pixel_line(t_all *all, double dist, double rad)
 	start ++;
 	end = HEIGHT - start;
 	while (start <= end && start > 0)
-		mlx_put_pixel(all->background, -wide - 1, start ++, 0xff0000);
+	{
+		mlx_put_pixel(all->background, -wide - 1, start, get_pixel_color(all, start, (double)((end - ((HEIGHT - HEIGHT * i) / 2))), end));
+		++start;
+	}
+	all->ray_num++;
 }
 
 int	is_wall_h(t_all *all, int rad, double x, double y)
@@ -165,9 +169,12 @@ void	rays(t_all *all)
 	{
 		hor(all, good_angles(all, rad + all->z - FOV / 2));
 		ver(all, good_angles(all, rad + all->z - FOV / 2));
-		final(all, i ++);
+		final(all, i);
+		i++;
+		all->ray_hits[i][0] = -1;
+		all->ray_hits[i][1] = -1;
 		draw_pixel_line(all, all->dist[0], good_angles(all, rad));
-		rad += 0.04;
+		rad += 0.042;
 	}
 	all->ray_hits[i][0] = -1;
 	all->ray_hits[i][1] = -1;
@@ -247,6 +254,12 @@ void	my_hook(void *param)
 		mlx_get_mouse_pos( all->mlx, &(all->mouse_x_pos), &(all->mouse_y_pos));
 		all->z = good_angles(all, all->z - ((all->mouse_x_pos - (WIDTH / 2)) / 10));
 	}
+	if (mlx_is_mouse_down(all->mlx, MLX_MOUSE_BUTTON_LEFT))
+		all->gun_bool = 1;
+	if (all->gun_bool)
+	{
+		gun(all);
+	}
 	rays(all);
 }
 
@@ -280,6 +293,10 @@ int	main(int argc, char **argv)
 	if (!main_validator(&all, argv, argc))
 		return (ft_printf ("Error\n"), -1);
 	ft_printf ("Map validation successful!\n");
+	if (!get_textures(&all))
+		return (ft_printf ("Error\n"), -1);
+	else
+		ft_printf ("Texture validation successful!\n");
 	all.mlx = mlx_init(WIDTH, HEIGHT, "MLX42", 0);
 	if (!all.mlx)
 		ft_exit("error\n-MLX PROBLEM-", -1);
@@ -287,6 +304,7 @@ int	main(int argc, char **argv)
 	all.background = mlx_new_image(all.mlx, WIDTH, HEIGHT);
 	mlx_image_to_window(all.mlx, all.background, 0, 0);
 	rays(&all);
+	start_gun(&all);
 	mlx_loop_hook(all.mlx, my_hook, ((void *)&all));
 	mlx_loop(all.mlx);
 	mlx_terminate(all.mlx);
