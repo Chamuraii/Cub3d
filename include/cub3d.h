@@ -66,6 +66,7 @@ typedef struct s_all
 	unsigned int	i;
 	unsigned int	j;
 	unsigned int	texture_counter;
+	int 		mouse_counter;
 
 	int32_t	mouse_x_pos;
 	int32_t	mouse_y_pos;

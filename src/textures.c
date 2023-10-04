@@ -144,7 +144,6 @@ void	gun(t_all *all)
 		tumae = 0;
 		all->gun_bool = 0;
 		mlx_delete_image(all->mlx,all->gun_img);
-		all->gun[0] = mlx_load_png("textures/myguns.png");
 		up_left_point[0] = 0;
 		up_left_point[1] = 0;
 		down_right_point[0] = 276;

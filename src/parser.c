@@ -41,6 +41,7 @@ void	parser_init(t_all *all)
 	all->gun_img = 0;
 	all->gun_bool = 0;
 
+	all->mouse_counter = 0;
 	all->mouse_flag = 0;
 }
 

@@ -206,10 +206,31 @@ void	move_player(t_all *all, double x, double y)
 	}
 }
 
+void	my_key_hook(struct mlx_key_data keydata, void *param)
+{
+	t_all	*all;
+
+	all = (t_all *)param;
+	if (keydata.action == MLX_RELEASE)
+	{
+		if (keydata.key == MLX_KEY_L)
+		{
+			if (!all->mouse_flag)
+			{
+				all->mouse_flag = 1;
+			}
+			else
+			{
+				all->mouse_flag = 0;
+			}
+			mlx_set_cursor_mode(all->mlx, MLX_MOUSE_HIDDEN);
+		}
+	}
+}
+
 void	my_hook(void *param)
 {
 	t_all	*all;
-	static int counter;
 
 	all = (t_all *)param;
 	if (mlx_is_key_down(all->mlx, MLX_KEY_ESCAPE)) {
@@ -235,31 +256,21 @@ void	my_hook(void *param)
 	else if (mlx_is_key_down(all->mlx, MLX_KEY_LEFT)) {
 		all->z = good_angles(all, all->z + CAM_SPEED);
 	}
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_L)) {
-		if (!all->mouse_flag) {
-			all->mouse_flag = 1;
-		} else {
-			all->mouse_flag = 0;
-		}
-		mlx_set_cursor_mode(all->mlx, MLX_MOUSE_HIDDEN);
-	}
 	if (all->mouse_flag)
 	{
-		if (counter == 2)
+		if (all->mouse_counter == 2)
 		{
 			mlx_set_mouse_pos( all->mlx, WIDTH / 2, HEIGHT / 2);
-			counter = 0;
+			all->mouse_counter = 0;
 		}
-		++counter;
+		++(all->mouse_counter);
 		mlx_get_mouse_pos( all->mlx, &(all->mouse_x_pos), &(all->mouse_y_pos));
 		all->z = good_angles(all, all->z - ((all->mouse_x_pos - (WIDTH / 2)) / 10));
 	}
 	if (mlx_is_mouse_down(all->mlx, MLX_MOUSE_BUTTON_LEFT))
 		all->gun_bool = 1;
 	if (all->gun_bool)
-	{
 		gun(all);
-	}
 	rays(all);
 }
 
@@ -305,6 +316,7 @@ int	main(int argc, char **argv)
 	mlx_image_to_window(all.mlx, all.background, 0, 0);
 	rays(&all);
 	start_gun(&all);
+	mlx_key_hook(all.mlx, &my_key_hook, ((void *)&all));
 	mlx_loop_hook(all.mlx, my_hook, ((void *)&all));
 	mlx_loop(all.mlx);
 	mlx_terminate(all.mlx);
