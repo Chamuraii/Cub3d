@@ -40,6 +40,7 @@ typedef struct s_all
 	mlx_texture_t	*east;
 	mlx_texture_t	*south;
 	mlx_texture_t	*west;
+	mlx_texture_t	*side;
 	double			x;
 	double			y;
 	double			z;

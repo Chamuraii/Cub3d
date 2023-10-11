@@ -43,7 +43,7 @@ unsigned int get_pixel_color(t_all *all, unsigned int y, double range, unsigned 
 	double x;
 	double scale_y;
 
-	texture = all->north;
+	texture = all->side;
 	scale_y =  (double)texture->height / range;
 	if (y == end)
 		all->texture_counter = 0;

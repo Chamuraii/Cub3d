@@ -12,9 +12,6 @@
 
 #include "../include/cub3d.h"
 
-// pb of corner if round player coordinates (top left corner disappears)
-// really rare go through diagonal ray in middle of corner
-
 void	sky_floor(t_all *all);
 
 void	ft_exit(char *reason, int status)
@@ -157,6 +154,26 @@ void	final(t_all *all, int i)
 		all->ray_hits[i][1] = all->map_width - 0.1;
 }
 
+void	what_side(t_all *all, double rad)
+{
+	if (rad < 90 && all->dir == 0)
+		all->side = all->south;
+	else if (rad < 90 && all->dir == 1)
+		all->side = all->west;
+	else if (rad < 180 && all->dir == 0)
+		all->side = all->south;
+	else if (rad < 180 && all->dir == 1)
+		all->side = all->east;
+	else if (rad < 270 && all->dir == 0)
+		all->side = all->north;
+	else if (rad < 270 && all->dir == 1)
+		all->side = all->east;
+	else if (all->dir == 0)
+		all->side = all->north;
+	else
+		all->side = all->west;
+}
+
 void	rays(t_all *all)
 {
 	double	rad;
@@ -164,6 +181,8 @@ void	rays(t_all *all)
 
 	rad = 0;
 	i = 0;
+	if (all->x == floor(all->x))
+		all->x += 1e-9;
 	sky_floor(all);
 	while (rad <= FOV)
 	{
@@ -173,6 +192,7 @@ void	rays(t_all *all)
 		i++;
 		all->ray_hits[i][0] = -1;
 		all->ray_hits[i][1] = -1;
+		what_side(all, good_angles(all, rad + all->z - FOV / 2));
 		draw_pixel_line(all, all->dist[0], good_angles(all, rad));
 		rad += 0.042;
 	}
@@ -203,6 +223,8 @@ void	move_player(t_all *all, double x, double y)
 	{
 		all->x += x;
 		all->y += y;
+		if (all->x == floor(all->x))
+			all->x += 1e-9;
 	}
 }
 
