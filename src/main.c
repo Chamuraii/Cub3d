@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:24:47 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/27 16:27:34 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/10/12 22:14:03 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,29 +36,26 @@ void	draw_pixel_line(t_all *all, double dist, double rad)
 	int			end;
 	int			wide;
 
-	if (dist < 1)
-		i = 1;
-	else
+	i = 1;
+	if (dist > 1)
 		i = 1 / dist;
 	start = (HEIGHT - HEIGHT * i) / 2;
 	rad = good_angles(all, rad);
 	wide = rad * WIDTH / FOV;
 	if (rad == 0)
 		wide = -WIDTH + 1;
-	start ++;
 	end = HEIGHT - start;
-	while (start <= end && start > 0)
+	start ++;
+	while (start < end && start > 0)
 	{
 		if (dist >= 1)
 			mlx_put_pixel(all->background, -wide - 1, start, get_pixel_color(
-					all, (double)((end - ((HEIGHT - HEIGHT * 1/dist) / 2)))));
+					all, (double)((end - ((HEIGHT - HEIGHT * 1 / dist) / 2)))));
 		else
 			mlx_put_pixel(all->background, -wide - 1, start, get_pixel_color(
-					all, (double)((end - (HEIGHT - HEIGHT * 1/dist)))));
+					all, (double)((end - (HEIGHT - HEIGHT * 1 / dist)))));
 		++start;
 	}
-	all->ray_num++;
-	all->texture_counter = 0;
 }
 
 int	is_wall_h(t_all *all, int rad, double x, double y)
@@ -79,7 +76,7 @@ int	is_wall_h(t_all *all, int rad, double x, double y)
 
 int	is_wall_v(t_all *all, int rad, double x, double y)
 {
-	if (rad > 270 || rad < 90)
+	if (rad >= 270 || rad < 90)
 		x -= 1e-9;
 	if (y <= 0 || y >= all->map_height || x <= 0 || x >= all->map_width
 		|| all->map[(int)y][(int)x] == 1)
@@ -200,6 +197,8 @@ void	rays(t_all *all)
 		all->ray_hits[i][1] = -1;
 		what_side(all, good_angles(all, rad + all->z - FOV / 2));
 		draw_pixel_line(all, all->dist[0], good_angles(all, rad));
+		all->ray_num++;
+		all->texture_counter = 0;
 		rad += 0.042;
 	}
 	all->ray_hits[i][0] = -1;
@@ -225,6 +224,10 @@ int	diag_jump(t_all *all, int x, int y)
 void	move_player(t_all *all, double x, double y)
 {
 	if (all->map[(int)floor(all->y + y)][(int)floor(all->x + x)] != 1
+	&& (all->map[(int)floor(all->y + y + 0.05)]
+		[(int)floor(all->x + x + 0.05)] != 1)
+	&& (all->map[(int)floor(all->y + y - 0.05)]
+		[(int)floor(all->x + x - 0.05)] != 1)
 		&& diag_jump(all, all->x + x, all->y + y))
 	{
 		all->x += x;
@@ -244,16 +247,32 @@ void	my_key_hook(struct mlx_key_data keydata, void *param)
 		if (keydata.key == MLX_KEY_L)
 		{
 			if (!all->mouse_flag)
-			{
 				all->mouse_flag = 1;
-			}
 			else
-			{
 				all->mouse_flag = 0;
-			}
 			mlx_set_cursor_mode(all->mlx, MLX_MOUSE_HIDDEN);
 		}
 	}
+}
+
+void	mouse(t_all *all)
+{
+	if (all->mouse_flag)
+	{
+		if (all->mouse_counter == 2)
+		{
+			mlx_set_mouse_pos(all->mlx, WIDTH / 2, HEIGHT / 2);
+			all->mouse_counter = 0;
+		}
+		++(all->mouse_counter);
+		mlx_get_mouse_pos(all->mlx, &(all->mouse_x_pos), &(all->mouse_y_pos));
+		all->z = good_angles(all, all->z
+				-((all->mouse_x_pos - (WIDTH / 2)) / 10));
+	}
+	if (mlx_is_mouse_down(all->mlx, MLX_MOUSE_BUTTON_LEFT))
+		all->gun_bool = 1;
+	if (all->gun_bool)
+		gun(all);
 }
 
 void	my_hook(void *param)
@@ -261,44 +280,25 @@ void	my_hook(void *param)
 	t_all	*all;
 
 	all = (t_all *)param;
-	if (mlx_is_key_down(all->mlx, MLX_KEY_ESCAPE)) {
+	if (mlx_is_key_down(all->mlx, MLX_KEY_ESCAPE))
 		ft_exit("BYE <3", 1);
-	}
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_W)) {
-		move_player(all, (-cos(all->z * PI / 180)) / 30, (sin(all->z * PI / 180)) / 30);
-	}
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_S)) {
-		move_player(all, (cos(all->z * PI / 180)) / 30, (-sin(all->z * PI / 180)) / 30);
-	}
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_A)) {
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_W))
+		move_player(all, (-cos(all->z * PI / 180)) / 30,
+			(sin(all->z * PI / 180)) / 30);
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_S))
+		move_player(all, (cos(all->z * PI / 180)) / 30,
+			(-sin(all->z * PI / 180)) / 30);
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_A))
 		move_player(all, (cos((all->z - 90) * PI / 180)) / 30,
-					(-sin((all->z - 90) * PI / 180)) / 30);
-	}
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_D)) {
+			(-sin((all->z - 90) * PI / 180)) / 30);
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_D))
 		move_player(all, (cos((all->z + 90) * PI / 180)) / 30,
-					(-sin((all->z + 90) * PI / 180)) / 30);
-	}
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_RIGHT)) {
+			(-sin((all->z + 90) * PI / 180)) / 30);
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_RIGHT))
 		all->z = good_angles(all, all->z - CAM_SPEED);
-	}
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_LEFT)) {
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_LEFT))
 		all->z = good_angles(all, all->z + CAM_SPEED);
-	}
-	if (all->mouse_flag)
-	{
-		if (all->mouse_counter == 2)
-		{
-			mlx_set_mouse_pos( all->mlx, WIDTH / 2, HEIGHT / 2);
-			all->mouse_counter = 0;
-		}
-		++(all->mouse_counter);
-		mlx_get_mouse_pos( all->mlx, &(all->mouse_x_pos), &(all->mouse_y_pos));
-		all->z = good_angles(all, all->z - ((all->mouse_x_pos - (WIDTH / 2)) / 10));
-	}
-	if (mlx_is_mouse_down(all->mlx, MLX_MOUSE_BUTTON_LEFT))
-		all->gun_bool = 1;
-	if (all->gun_bool)
-		gun(all);
+	mouse(all);
 	rays(all);
 }
 
