@@ -10,11 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// TODO
-//  Fix floodfill
-//  Make colors module for 255
-//
-
 #include "../include/cub3d.h"
 
 void	parser_init(t_all *all)
@@ -23,14 +18,14 @@ void	parser_init(t_all *all)
 	all->SO_texture = 0;
 	all->WE_texture = 0;
 	all->EA_texture = 0;
-	all->ceiling_color[0] = 0;
-	all->ceiling_color[1] = 0;
-	all->ceiling_color[2] = 0;
-	all->ceiling_color[3] = 0;
-	all->floor_color[0] = 0;
-	all->floor_color[1] = 0;
-	all->floor_color[2] = 0;
-	all->floor_color[3] = 0;
+	all->ceiling_color_rgb[0] = 0;
+	all->ceiling_color_rgb[1] = 0;
+	all->ceiling_color_rgb[2] = 0;
+	all->ceiling_color_rgb[3] = 0;
+	all->floor_color_rgb[0] = 0;
+	all->floor_color_rgb[1] = 0;
+	all->floor_color_rgb[2] = 0;
+	all->floor_color_rgb[3] = 0;
 	all->map_width = 0;
 	all->map_height = 0;
 	all->x = 0;
@@ -43,6 +38,12 @@ void	parser_init(t_all *all)
 
 	all->mouse_counter = 0;
 	all->mouse_flag = 0;
+}
+
+void parser_setter(t_all *all)
+{
+	all->floor_color = get_rgba(all->floor_color_rgb[0], all->floor_color_rgb[1], all->floor_color_rgb[2], 255);
+	all->ceiling_color = get_rgba(all->ceiling_color_rgb[0], all->ceiling_color_rgb[1], all->ceiling_color_rgb[2], 255);
 }
 
 char	*get_next_line_no_nl(int fd)
@@ -104,15 +105,15 @@ int	rgb_repeated_checker(t_all *all, int boole)
 {
 	if (boole == 0)
 	{
-		if (all->floor_color[3])
+		if (all->floor_color_rgb[3])
 			return (0);
-		all->floor_color[3] = 1;
+		all->floor_color_rgb[3] = 1;
 	}
 	else
 	{
-		if (all->ceiling_color[3])
+		if (all->ceiling_color_rgb[3])
 			return (0);
-		all->ceiling_color[3] = 1;
+		all->ceiling_color_rgb[3] = 1;
 	}
 	return (1);
 }
@@ -133,9 +134,9 @@ int	rgb_validator(t_all *all, char *str, int boole)
 	while (str[i])
 	{
 		if (boole == 0)
-			all->floor_color[j++] = (ft_atoi(str + i) % 256);
+			all->floor_color_rgb[j++] = (ft_atoi(str + i) % 256);
 		else
-			all->ceiling_color[j++] = (ft_atoi(str + i) % 256);
+			all->ceiling_color_rgb[j++] = (ft_atoi(str + i) % 256);
 		while (str[i] && ft_isdigit(str[i]))
 			++i;
 		if (str[i] == ',')
@@ -397,5 +398,6 @@ int	main_validator(t_all *all, char **argv, int argc)
 	else
 		return (0);
 	parse_map(all);
+	parser_setter(all);
 	return (1);
 }

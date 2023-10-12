@@ -49,10 +49,16 @@ void	draw_pixel_line(t_all *all, double dist, double rad)
 	end = HEIGHT - start;
 	while (start <= end && start > 0)
 	{
-		mlx_put_pixel(all->background, -wide - 1, start, get_pixel_color(all, start, (double)((end - ((HEIGHT - HEIGHT * i) / 2))), end));
+		if (dist >= 1)
+			mlx_put_pixel(all->background, -wide - 1, start, get_pixel_color(
+					all, (double)((end - ((HEIGHT - HEIGHT * 1/dist) / 2)))));
+		else
+			mlx_put_pixel(all->background, -wide - 1, start, get_pixel_color(
+					all, (double)((end - (HEIGHT - HEIGHT * 1/dist)))));
 		++start;
 	}
 	all->ray_num++;
+	all->texture_counter = 0;
 }
 
 int	is_wall_h(t_all *all, int rad, double x, double y)
@@ -306,14 +312,14 @@ void	sky_floor(t_all *all)
 	while (y ++ < HEIGHT / 2 - 1)
 	{
 		while (x ++ < WIDTH)
-			mlx_put_pixel(all->background, x, y, 0x8989ff);
+			mlx_put_pixel(all->background, x, y, all->ceiling_color);
 		x = -1;
 	}
 	y = HEIGHT / 2 - 1;
 	while (y ++ < HEIGHT - 1)
 	{
 		while (x ++ < WIDTH)
-			mlx_put_pixel(all->background, x, y, 0xff9e3d);
+			mlx_put_pixel(all->background, x, y, all->floor_color);
 		x = -1;
 	}
 }

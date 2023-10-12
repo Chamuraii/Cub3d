@@ -29,7 +29,12 @@ int	get_textures(t_all *all)
 	return (1);
 }
 
-unsigned int get_rgba(uint8_t *pixels, unsigned int width, unsigned int y, double x)
+unsigned int	get_rgba(int r, int g, int b, int a)
+{
+	return (r << 24 | g << 16 | b << 8 | a);
+}
+
+unsigned int get_rgba_img(uint8_t *pixels, unsigned int width, unsigned int y, double x)
 {
 	return ((((pixels[(int) (((y * (width)) + (int)round(x))) * 4]) << 24)) |
 			((pixels[(int) (((y * (width)) + (int)round(x))) * 4 + 1]) << 16) |
@@ -37,17 +42,18 @@ unsigned int get_rgba(uint8_t *pixels, unsigned int width, unsigned int y, doubl
 			((pixels[(int) ((y * (width)) + (int)round(x)) * 4 + 3])));
 }
 
-unsigned int get_pixel_color(t_all *all, unsigned int y, double range, unsigned int end) {
+unsigned int get_pixel_color(t_all *all, double range) {
 
 	mlx_texture_t *texture;
 	double x;
 	double scale_y;
+	int y;
 
 	texture = all->side;
 	scale_y =  (double)texture->height / range;
-	if (y == end)
-		all->texture_counter = 0;
-	y = (unsigned int)((all->texture_counter++ * scale_y));
+	if (range > HEIGHT && !all->texture_counter)
+		all->texture_counter = (unsigned int)((round(range) - HEIGHT) / 2);
+	y = (int)((all->texture_counter++ * scale_y));
 	if (all->ray_hits[all->ray_num][1] == -1)
 		all->ray_num = 0;
 	if (!all->dir)
@@ -61,7 +67,7 @@ unsigned int get_pixel_color(t_all *all, unsigned int y, double range, unsigned 
 	else
 		x = 1 - (x - (int) x);
 	x = (texture->width - 1) * x;
-	return (get_rgba(texture->pixels, texture->width, y, x));
+	return (get_rgba_img(texture->pixels, texture->width, y, x));
 }
 
 void	start_gun(t_all *all)

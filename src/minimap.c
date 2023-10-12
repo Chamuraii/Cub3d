@@ -10,9 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// TODO
-//  Fix Y >= 8 breaking map
-
 #include "../include/cub3d.h"
 
 void	update_player_pos(t_all *all)

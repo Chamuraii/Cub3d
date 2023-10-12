@@ -57,8 +57,10 @@ typedef struct s_all
 	char			*SO_texture;
 	char			*WE_texture;
 	char			*EA_texture;
-	int				floor_color[4]; // 3 spaces for RGB values and 1 bool for already parsed
-	int				ceiling_color[4];
+	int				floor_color_rgb[4]; // 3 spaces for RGB values and 1 bool for already parsed
+	int				ceiling_color_rgb[4];
+	unsigned int	floor_color;
+	unsigned int	ceiling_color;
 	unsigned int	map_width;
 	unsigned int	map_height;
 	char			**map_char;
@@ -72,16 +74,19 @@ typedef struct s_all
 	int32_t	mouse_x_pos;
 	int32_t	mouse_y_pos;
 	uint32_t	mouse_flag;
+
+	int distance;
 }			t_all;
 
 int		main_validator(t_all *all, char **argv, int argc);
 void	parser_init(t_all *all);
 void	ft_free(t_all *all);
 void	draw_minimap(t_all *all);
-unsigned int		get_pixel_color(t_all *all, unsigned int y, double range, unsigned int end);
+unsigned int		get_pixel_color(t_all *all, double range);
 int					get_textures(t_all *all);
 void				gun(t_all *all);
-unsigned int get_rgba(uint8_t *pixels, unsigned int width, unsigned int y, double x);
+unsigned int get_rgba_img(uint8_t *pixels, unsigned int width, unsigned int y, double x);
 void	start_gun(t_all *all);
+unsigned int	get_rgba(int r, int g, int b, int a);
 
 #endif
