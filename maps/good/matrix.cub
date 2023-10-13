@@ -1,7 +1,7 @@
-NO textures/matrix.xpm
-SO textures/matrix.xpm
-WE textures/matrix.xpm
-EA textures/matrix.xpm
+NO ./textures/north.png
+SO ./textures/south.png
+EA ./textures/east.png
+WE ./textures/west.png
 
 F 0,0,0
 C 0,0,0
@@ -27,4 +27,3 @@ C 0,0,0
 101010111011111111101
 1N1000001000000000001
 111111111111111111111
-

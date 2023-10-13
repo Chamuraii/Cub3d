@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/28 11:25:42 by jchamak           #+#    #+#             */
-/*   Updated: 2023/09/27 16:11:42 by jchamak          ###   ########.fr       */
+/*   Updated: 2023/10/13 21:00:28 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # define WIDTH 1050
 # define FOV 45
 # define CAM_SPEED 1.5
+# define SPEED 1
 
 typedef struct s_all
 {
@@ -88,5 +89,33 @@ void				gun(t_all *all);
 unsigned int get_rgba_img(uint8_t *pixels, unsigned int width, unsigned int y, double x);
 void	start_gun(t_all *all);
 unsigned int	get_rgba(int r, int g, int b, int a);
+void	mouse(t_all *all);
+
+// main.c
+
+void	ft_exit(char *reason, int status);
+double	good_angles(t_all *all, double ang);
+int		main(int argc, char **argv);
+
+// move.c
+
+double	good_angles(t_all *all, double ang);
+int		diag_jump(t_all *all, int x, int y);
+void	move_player(t_all *all, double x, double y);
+void	my_hook(void *param);
+
+// paint.c
+
+void	background(t_all *all);
+void	draw_pixel_line(t_all *all, double dist, double rad);
+void	what_side(t_all *all, double rad);
+
+// rays.c
+
+int		is_wall_h(t_all *all, int rad, double x, double y);
+int		is_wall_v(t_all *all, int rad, double x, double y);
+void	cast(t_all *all, double rad, int o);
+void	rays(t_all *all);
+void	final(t_all *all, int i);
 
 #endif
