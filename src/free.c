@@ -16,15 +16,11 @@ void	ft_map_free(t_all *all)
 {
 	int i;
 
-	i = 0;
+	i = 1;
 	while (i < all->map_height)
 	{
-		free(all->map[i]);
-		free(all->map_char[i]);
 		free(all->map_cpy[i]);
 	}
-	free(all->map);
-	free(all->map_char);
 	free(all->map_cpy);
 }
 

@@ -60,7 +60,7 @@ void	draw_pixel_line(t_all *all, double dist, double rad)
 
 int	is_wall_h(t_all *all, int rad, double x, double y)
 {
-	if (rad > 180)
+	if (rad >= 180)
 		y -= 1e-9;
 	if (y <= 0 || y >= all->map_height || x <= 0 || x >= all->map_width
 		|| all->map[(int)y][(int)x] == 1)
@@ -99,8 +99,8 @@ void	ver(t_all *all, double rad)
 	o = 0;
 	while (1)
 	{
-		if (rad == 0 || rad == 90 || rad == 180 || rad == 270)
-			rad += 0.2;
+		//if (rad == 0 || rad == 90 || rad == 180 || rad == 270)
+		//	rad += 0.2;
 		x = floor(all->x - o);
 		if (rad < 270 && rad > 90)
 			x = ceil(all->x + o);
@@ -120,8 +120,8 @@ void	hor(t_all *all, double rad)
 	o = 0;
 	while (1)
 	{
-		if (rad == 0 || rad == 90 || rad == 180 || rad == 270)
-			rad += 0.2;
+		//if (rad == 0 || rad == 90 || rad == 180 || rad == 270)
+		//	rad += 0.2;
 		y = floor(all->y - o);
 		if (rad < 180)
 			y = ceil(all->y + o);
@@ -324,10 +324,16 @@ void	sky_floor(t_all *all)
 	}
 }
 
+void	ft_leaks()
+{
+	system("leaks -q Cub3d");
+}
+
 int	main(int argc, char **argv)
 {
 	t_all	all;
 
+	atexit(ft_leaks);
 	parser_init(&all);
 	if (!main_validator(&all, argv, argc))
 		return (ft_printf ("Error\n"), -1);
@@ -348,5 +354,6 @@ int	main(int argc, char **argv)
 	mlx_loop_hook(all.mlx, my_hook, ((void *)&all));
 	mlx_loop(all.mlx);
 	mlx_terminate(all.mlx);
+	ft_free(&all);
 	return (0);
 }

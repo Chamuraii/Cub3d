@@ -36,6 +36,8 @@ void	parser_init(t_all *all)
 	all->gun_img = 0;
 	all->gun_bool = 0;
 
+	all->i = 0;
+	all->j = 0;
 	all->mouse_counter = 0;
 	all->mouse_flag = 0;
 }
@@ -217,7 +219,7 @@ int	flood_validator(t_all *all,char **map)
 	while (map[i][j])
 		if (map[i][j++] == 'F')
 			return (0);
-	i = all->map_height - 1;
+	i = (int)all->map_height - 1;
 	j = 0;
 	while (map[i][j])
 		if (map[i][j++] == 'F')
@@ -228,7 +230,7 @@ int	flood_validator(t_all *all,char **map)
 		if (map[i++][j] == 'F')
 			return (0);
 	i = 0;
-	j = all->map_width - 1;
+	j = (int)all->map_width - 1;
 	while (map[i])
 		if (map[i++][j] == 'F')
 			return (0);
@@ -261,15 +263,15 @@ int	map_validator(t_all *all, char **str, int fd)
 				if (player_count)
 					return (0);
 				if (str[0][i] == 'N')
-					all->z = 270;
+					all->z = 271;
 				else if (str[0][i] == 'W')
-					all->z = 0;
+					all->z = 1;
 				else if (str[0][i] == 'S')
-					all->z = 90;
+					all->z = 91;
 				else if (str[0][i] == 'E')
-					all->z = 180;
-				all->y = j;
-				all->x = i;
+					all->z = 181;
+				all->y = j + 0.1;
+				all->x = i + 0.1;
 				all->oldy = j;
 				all->oldx = i;
 				player_count = 1;
@@ -292,7 +294,7 @@ int	map_validator(t_all *all, char **str, int fd)
 	i = -1;
 	while (matrix[++i])
 		free(matrix[i]);
-	flood_fill(all, all->map_cpy, all->y, all->x);
+	flood_fill(all, all->map_cpy, (int)all->y, (int)all->x);
 	if (!flood_validator(all, all->map_cpy))
 		return (0);
 	return (1);

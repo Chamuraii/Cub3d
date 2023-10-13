@@ -80,14 +80,12 @@ void	draw_ray_minimap(t_all *all, int start_y, int start_x, int offset[2])
 
 void	draw_minimap(t_all *all)
 {
-	int	y = 0;
-	int	x = 0;
+	int	y;
+	int	x;
 	int	i;
 	int	j;
 	int y_offset_u = 0;
 	int x_offset_l = 0;
-	int y_offset_d = 0;
-	int x_offset_r = 0;
 	int start_offset_y;
 	int start_offset_x;
 	int player_dist = 16;
