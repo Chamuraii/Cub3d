@@ -59,11 +59,8 @@ int	main(int argc, char **argv)
 	parser_init(&all);
 	if (!main_validator(&all, argv, argc))
 		ft_exit(&all, -1);
-	ft_printf ("Map validation successful!\n");
 	if (!get_textures(&all))
 		ft_exit(&all, 2);
-	else
-		ft_printf ("Texture validation successful!\n");
 	all.mlx = mlx_init(WIDTH, HEIGHT, "MLX42", 0);
 	if (!all.mlx)
 		ft_exit(&all, -1);
