@@ -14,17 +14,26 @@
 
 void	parser_init(t_all *all)
 {
+	all->mlx = 0;
+	all->map_cpy = 0;
+	all->map_char = 0;
+	all->map = 0;
 	all->NO_texture = 0;
 	all->SO_texture = 0;
 	all->WE_texture = 0;
 	all->EA_texture = 0;
-	all->ceiling_color_rgb[0] = 0;
-	all->ceiling_color_rgb[1] = 0;
-	all->ceiling_color_rgb[2] = 0;
+	all->north = 0;
+	all->east = 0;
+	all->south = 0;
+	all->west = 0;
+	all->gun = 0;
+	all->ceiling_color_rgb[0] = 256;
+	all->ceiling_color_rgb[1] = 256;
+	all->ceiling_color_rgb[2] = 256;
 	all->ceiling_color_rgb[3] = 0;
-	all->floor_color_rgb[0] = 0;
-	all->floor_color_rgb[1] = 0;
-	all->floor_color_rgb[2] = 0;
+	all->floor_color_rgb[0] = 256;
+	all->floor_color_rgb[1] = 256;
+	all->floor_color_rgb[2] = 256;
 	all->floor_color_rgb[3] = 0;
 	all->map_width = 0;
 	all->map_height = 0;
@@ -35,11 +44,12 @@ void	parser_init(t_all *all)
 	all->texture_counter = 0;
 	all->gun_img = 0;
 	all->gun_bool = 0;
-
 	all->i = 0;
 	all->j = 0;
 	all->mouse_counter = 0;
 	all->mouse_flag = 0;
+	all->next_line = 0;
+	all->is_there_map = 0;
 }
 
 void parser_setter(t_all *all)
@@ -69,54 +79,64 @@ int	texture_map_validator(t_all *all, char *str, int step)
 	while (ft_isspace(str[j]))
 		++j;
 	if (j == 2)
-		return (0);
+		ft_exit(all, 2);
 	ext = ft_strrchr(str, '.');
 	if ((!ft_strncmp(str, "NO", 2) || !ft_strncmp(str, "WE", 2) || !ft_strncmp(str, "SO", 2) || !ft_strncmp(str, "EA", 2)) && !ft_strcmp(ext, ".png"))
 	{
 		if (step == 0)
 		{
 			if (all->NO_texture)
-				return (0);
+				ft_exit(all, 3);
 			all->NO_texture = ft_strdup(str + j);
 		}
 		else if (step == 1)
 		{
 			if (all->SO_texture)
-				return (0);
+				ft_exit(all, 3);
 			all->SO_texture = ft_strdup(str + j);
 		}
 		else if (step == 2)
 		{
 			if (all->WE_texture)
-				return (0);
+				ft_exit(all, 3);
 			all->WE_texture = ft_strdup(str + j);
 		}
 		else if (step == 3)
 		{
 			if (all->EA_texture)
-				return (0);
+				ft_exit(all, 3);
 			all->EA_texture = ft_strdup(str + j);
 		}
 	}
 	else
-		return (0);
+		ft_exit(all, 3);
 	return (1);
 }
 
 int	rgb_repeated_checker(t_all *all, int boole)
 {
-	if (boole == 0)
+	int i;
+
+	if (!boole)
 	{
-		if (all->floor_color_rgb[3])
-			return (0);
+		if (all->floor_color_rgb[3]) {
+			ft_exit(all, 3);
+		}
 		all->floor_color_rgb[3] = 1;
 	}
-	else
+	else if (boole == 1)
 	{
-		if (all->ceiling_color_rgb[3])
-			return (0);
+		if (all->ceiling_color_rgb[3]) {
+			ft_exit(all, 3);
+		}
 		all->ceiling_color_rgb[3] = 1;
 	}
+	i = -1;
+	if (boole == 3)
+		while (++i < 3)
+			if (all->floor_color_rgb[i] >= 256 ||
+				all->ceiling_color_rgb[i] >= 256)
+				ft_exit(all, 3);
 	return (1);
 }
 
@@ -130,7 +150,7 @@ int	rgb_validator(t_all *all, char *str, int boole)
 	while (ft_isspace(str[i]))
 		++i;
 	if (i == 1)
-		return (0);
+		ft_exit(all, 3);
 	j = 0;
 	comma_counter = 0;
 	while (str[i])
@@ -139,42 +159,29 @@ int	rgb_validator(t_all *all, char *str, int boole)
 			all->floor_color_rgb[j++] = (ft_atoi(str + i) % 256);
 		else
 			all->ceiling_color_rgb[j++] = (ft_atoi(str + i) % 256);
-		while (str[i] && ft_isdigit(str[i]))
+		while (ft_isdigit(str[i]))
 			++i;
 		if (str[i] == ',')
 			++comma_counter;
 		else if (str[i])
-			return (0);
+			ft_exit(all, 3);
 		if (!str[i++] && comma_counter != 2)
-			return (0);
+			ft_exit(all, 3);
 	}
-	if (!rgb_repeated_checker(all, boole))
-		return (0);
+	rgb_repeated_checker(all, boole);
 	return (1);
 }
 
 int	cub_directions_validator(t_all *all, char *str)
 {
 	if (!ft_strncmp(str, "NO", 2))
-	{
-		if (!texture_map_validator(all, str, 0))
-			return (0);
-	}
+		texture_map_validator(all, str, 0);
 	else if (!ft_strncmp(str, "SO", 2))
-	{
-		if (!texture_map_validator(all, str, 1))
-			return (0);
-	}
+		texture_map_validator(all, str, 1);
 	else if (!ft_strncmp(str, "WE", 2))
-	{
-		if (!texture_map_validator(all, str, 2))
-			return (0);
-	}
+		texture_map_validator(all, str, 2);
 	else if (!ft_strncmp(str, "EA", 2))
-	{
-		if (!texture_map_validator(all, str, 3))
-			return (0);
-	}
+		texture_map_validator(all, str, 3);
 	else
 		return (2);
 	return (1);
@@ -186,15 +193,24 @@ char	**map_copy(t_all *all, char **matrix, int height)
 	char	**map_cpy;
 
 	i = 0;
-	map_cpy = malloc((height + 1) * sizeof(char *));
+	map_cpy = ft_calloc((height + 1) * sizeof(char *), 1);
+	if (!map_cpy)
+		ft_exit(all, 1);
 	while (i < height)
 	{
 		map_cpy[i] = ft_strdup(matrix[i]);
+		if (!map_cpy[i])
+			ft_exit(all, 1);
 		while (ft_strlen(map_cpy[i]) != all->map_width)
+		{
 			map_cpy[i] = ft_strjoin(map_cpy[i], ft_strdup(" "));
+			if (!map_cpy[i])
+				ft_exit(all, 1);
+		}
 		++i;
 	}
 	map_cpy[i] = 0;
+	all->is_there_map = 1;
 	return (map_cpy);
 }
 
@@ -218,22 +234,22 @@ int	flood_validator(t_all *all,char **map)
 	j = 0;
 	while (map[i][j])
 		if (map[i][j++] == 'F')
-			return (0);
+			ft_exit(all, 4);
 	i = (int)all->map_height - 1;
 	j = 0;
 	while (map[i][j])
 		if (map[i][j++] == 'F')
-			return (0);
+			ft_exit(all, 4);
 	i = 0;
 	j = 0;
 	while (map[i])
 		if (map[i++][j] == 'F')
-			return (0);
+			ft_exit(all, 4);
 	i = 0;
 	j = (int)all->map_width - 1;
 	while (map[i])
 		if (map[i++][j] == 'F')
-			return (0);
+			ft_exit(all, 4);
 	return (1);
 }
 
@@ -252,16 +268,16 @@ int	map_validator(t_all *all, char **str, int fd)
 		while (ft_isspace(str[0][i]))
 			++i;
 		if (!str[0][i])
-			return (0);
+			ft_exit(all, 4);
 		i = 0;
 		while (str[0][i])
 		{
 			if (str[0][i] != '0' && str[0][i] != '1' && str[0][i] != 'N' && str[0][i] != 'S' && str[0][i] != 'E' && str[0][i] != 'W' && str[0][i] != 'D' && !ft_isspace(str[0][i]))
-				return (0);
+				ft_exit(all, 4);
 			if (str[0][i] == 'N' || str[0][i] == 'W' || str[0][i] == 'S' || str[0][i] == 'E')
 			{
 				if (player_count)
-					return (0);
+					ft_exit(all, 4);
 				if (str[0][i] == 'N')
 					all->z = 271;
 				else if (str[0][i] == 'W')
@@ -285,7 +301,7 @@ int	map_validator(t_all *all, char **str, int fd)
 		*str = get_next_line_no_nl(fd);
 	}
 	if (!all->y || !all->x)
-		return (0);
+		ft_exit(all, 4);
 	matrix[j] = 0;
 	if (i > all->map_height)
 		all->map_height = j;
@@ -295,33 +311,20 @@ int	map_validator(t_all *all, char **str, int fd)
 	while (matrix[++i])
 		free(matrix[i]);
 	flood_fill(all, all->map_cpy, (int)all->y, (int)all->x);
-	if (!flood_validator(all, all->map_cpy))
-		return (0);
+	flood_validator(all, all->map_cpy);
 	return (1);
 }
 
 int	cub_line_validator(t_all *all, char **str, int fd)
 {
-	int	save;
-
-	save = cub_directions_validator(all, *str);
-	if (!save)
-		return (0);
-	else if (save == 2)
+	if (cub_directions_validator(all, *str) == 2)
 	{
 		if (!ft_strncmp(*str, "F", 1))
-		{
-			if (!rgb_validator(all, *str, 0))
-				return (0);
-		}
+			rgb_validator(all, *str, 0);
 		else if (!ft_strncmp(*str, "C", 1))
-		{
-			if (!rgb_validator(all, *str, 1))
-				return (0);
-		}
+			rgb_validator(all, *str, 1);
 		else
-			if (!map_validator(all, str, fd))
-				return (0);
+			map_validator(all, str, fd);
 	}
 	return (1);
 }
@@ -332,11 +335,11 @@ int	cub_validator(t_all *all, char **argv, int fd, char **str)
 
 	fd = open(argv[1], 0);
 	if (fd < 0)
-		return (0);
+		ft_exit(all, 5);
 	*str = get_next_line_no_nl(fd);
 	i = 0;
 	if (!(*str))
-		return (0);
+		ft_exit(all, 3);
 	while (*str)
 	{
 		if (!str[0][0])
@@ -345,8 +348,7 @@ int	cub_validator(t_all *all, char **argv, int fd, char **str)
 			*str = get_next_line_no_nl(fd);
 			continue ;
 		}
-		if (!cub_line_validator(all, str, fd))
-			return (free(*str), 0);
+		cub_line_validator(all, str, fd);
 		free(*str);
 		*str = get_next_line_no_nl(fd);
 		++i;
@@ -362,10 +364,14 @@ void	parse_map(t_all *all)
 	int j;
 
 	i = 0;
-	all->map = malloc(all->map_height * all->map_width * 4);
+	all->map = ft_calloc(all->map_height * all->map_width * 4, 1);
+	if (!all->map)
+		ft_exit(all, 1);
 	while (all->map_char[i])
 	{
-		all->map[i] = malloc(all->map_width * 4);
+		all->map[i] = ft_calloc(all->map_width * 4, 1);
+		if (!all->map[i])
+			ft_exit(all, 1);
 		j = 0;
 		while (all->map_char[i][j])
 		{
@@ -386,19 +392,17 @@ void	parse_map(t_all *all)
 int	main_validator(t_all *all, char **argv, int argc)
 {
 	int		fd;
-	char	*str;
 
 	if (argc != 2)
-		return (0);
-	str = 0;
+		ft_exit(all, 7);
 	fd = 0;
 	if (!ft_strcmp(ft_strrchr(argv[1], '.'), ".cub"))
-	{
-		if (!cub_validator(all, argv, fd, &str))
-			return (0);
-	}
+		cub_validator(all, argv, fd, &(all->next_line));
 	else
-		return (0);
+		ft_exit(all, 6);
+	rgb_repeated_checker(all, 3);
+	if (!all->is_there_map)
+		ft_exit(all, 3);
 	parse_map(all);
 	parser_setter(all);
 	return (1);

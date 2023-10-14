@@ -21,16 +21,16 @@ void	background(t_all *all)
 
 	x = -1;
 	y = -1;
-	while (y ++ < HEIGHT / 2 - 1)
+	while (++y < HEIGHT / 2 - 1)
 	{
-		while (x ++ < WIDTH)
+		while (++x < WIDTH)
 			mlx_put_pixel(all->background, x, y, all->ceiling_color);
 		x = -1;
 	}
 	y = HEIGHT / 2 - 1;
-	while (y ++ < HEIGHT - 1)
+	while (++y < HEIGHT - 1)
 	{
-		while (x ++ < WIDTH)
+		while (++x < WIDTH)
 			mlx_put_pixel(all->background, x, y, all->floor_color);
 		x = -1;
 	}

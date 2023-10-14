@@ -68,7 +68,7 @@ void	my_hook(void *param)
 
 	all = (t_all *)param;
 	if (mlx_is_key_down(all->mlx, MLX_KEY_ESCAPE))
-		ft_exit("BYE <3", 1);
+		ft_exit(all, 0);
 	else if (mlx_is_key_down(all->mlx, MLX_KEY_W))
 		move_player(all, -cos(all->z * PI / 180),
 			sin(all->z * PI / 180));
@@ -81,7 +81,7 @@ void	my_hook(void *param)
 	else if (mlx_is_key_down(all->mlx, MLX_KEY_D))
 		move_player(all, cos((all->z + 90) * PI / 180),
 			-sin((all->z + 90) * PI / 180));
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_RIGHT))
+	if (mlx_is_key_down(all->mlx, MLX_KEY_RIGHT))
 		all->z = good_angles(all, all->z - CAM_SPEED);
 	else if (mlx_is_key_down(all->mlx, MLX_KEY_LEFT))
 		all->z = good_angles(all, all->z + CAM_SPEED);

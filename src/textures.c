@@ -14,6 +14,8 @@
 
 int	get_textures(t_all *all)
 {
+	if (!all->NO_texture || !all->EA_texture || !all->SO_texture || !all->WE_texture)
+		ft_exit(all, 3);
 	all->north = mlx_load_png(all->NO_texture);
 	if (!all->north)
 		return (0);
@@ -75,12 +77,14 @@ void	start_gun(t_all *all)
 	uint32_t up_left_point[2];
 	uint32_t down_right_point[2];
 
-	all->gun[0] = mlx_load_png("textures/myguns.png");
+	all->gun = mlx_load_png("textures/myguns.png");
+	if (!all->gun)
+		ft_exit(all, 2);
 	up_left_point[0] = 0;
 	up_left_point[1] = 0;
 	down_right_point[0] = 276;
 	down_right_point[1] = 265;
-	all->gun_img =  mlx_texture_area_to_image(all->mlx, all->gun[0], up_left_point, down_right_point);
+	all->gun_img =  mlx_texture_area_to_image(all->mlx, all->gun, up_left_point, down_right_point);
 	mlx_image_to_window(all->mlx, all->gun_img, WIDTH - 276, HEIGHT - 265);
 }
 
@@ -97,7 +101,7 @@ void	gun(t_all *all)
 		up_left_point[1] = 0;
 		down_right_point[0] = 276;
 		down_right_point[1] = 265;
-		all->gun_img =  mlx_texture_area_to_image(all->mlx, all->gun[0], up_left_point, down_right_point);
+		all->gun_img =  mlx_texture_area_to_image(all->mlx, all->gun, up_left_point, down_right_point);
 		mlx_image_to_window(all->mlx, all->gun_img, WIDTH - 276, HEIGHT - 265);
 		++tumae;
 	}
@@ -108,7 +112,7 @@ void	gun(t_all *all)
 		up_left_point[1] = 0;
 		down_right_point[0] = 298	;
 		down_right_point[1] = 323;
-		all->gun_img =  mlx_texture_area_to_image(all->mlx, all->gun[0], up_left_point, down_right_point);
+		all->gun_img =  mlx_texture_area_to_image(all->mlx, all->gun, up_left_point, down_right_point);
 		mlx_image_to_window(all->mlx, all->gun_img, WIDTH - 300, HEIGHT - 300);
 		++tumae;
 	}
@@ -119,7 +123,7 @@ void	gun(t_all *all)
 		up_left_point[1] = 378;
 		down_right_point[0] = 330;
 		down_right_point[1] = 342;
-		all->gun_img =  mlx_texture_area_to_image(all->mlx, all->gun[0], up_left_point, down_right_point);
+		all->gun_img =  mlx_texture_area_to_image(all->mlx, all->gun, up_left_point, down_right_point);
 		mlx_image_to_window(all->mlx, all->gun_img, WIDTH - 336, HEIGHT - 338);
 		++tumae;
 	}
@@ -130,7 +134,7 @@ void	gun(t_all *all)
 		up_left_point[1] = 349;
 		down_right_point[0] = 309;
 		down_right_point[1] = 371;
-		all->gun_img =  mlx_texture_area_to_image(all->mlx, all->gun[0], up_left_point, down_right_point);
+		all->gun_img =  mlx_texture_area_to_image(all->mlx, all->gun, up_left_point, down_right_point);
 		mlx_image_to_window(all->mlx, all->gun_img, WIDTH - 300, HEIGHT - 350);
 		++tumae;
 	}
@@ -141,7 +145,7 @@ void	gun(t_all *all)
 		up_left_point[1] = 365;
 		down_right_point[0] = 370;
 		down_right_point[1] = 355;
-		all->gun_img =  mlx_texture_area_to_image(all->mlx, all->gun[0], up_left_point, down_right_point);
+		all->gun_img =  mlx_texture_area_to_image(all->mlx, all->gun, up_left_point, down_right_point);
 		mlx_image_to_window(all->mlx, all->gun_img, WIDTH - 300, HEIGHT - 350);
 		++tumae;
 	}
@@ -154,7 +158,7 @@ void	gun(t_all *all)
 		up_left_point[1] = 0;
 		down_right_point[0] = 276;
 		down_right_point[1] = 265;
-		all->gun_img =  mlx_texture_area_to_image(all->mlx, all->gun[0], up_left_point, down_right_point);
+		all->gun_img =  mlx_texture_area_to_image(all->mlx, all->gun, up_left_point, down_right_point);
 		mlx_image_to_window(all->mlx, all->gun_img, WIDTH - 276, HEIGHT - 265);
 	}
 }
