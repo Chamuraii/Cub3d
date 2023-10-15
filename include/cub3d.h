@@ -95,12 +95,11 @@ void	mouse(t_all *all);
 // main.c
 
 void	ft_exit(t_all *all, int status);
-double	good_angles(t_all *all, double ang);
 int		main(int argc, char **argv);
 
 // move.c
 
-double	good_angles(t_all *all, double ang);
+double	good_angles(double ang);
 int		diag_jump(t_all *all, int x, int y);
 void	move_player(t_all *all, double x, double y);
 void	my_hook(void *param);

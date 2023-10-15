@@ -27,7 +27,7 @@ void	update_player_pos(t_all *all)
 
 
 
-void	draw_ray_minimap(t_all *all, int start_y, int start_x, int offset[2])
+void	draw_ray_minimap(t_all *all, int start_y, int start_x)
 {
 	double	m;
 	double n;
@@ -41,10 +41,10 @@ void	draw_ray_minimap(t_all *all, int start_y, int start_x, int offset[2])
 	for (int i = 0; all->ray_hits[i][0] != -1; i++)
 	{
 		x = (all->x * 8) - (start_x * 8);
-		ray_y = (all->ray_hits[i][0] * 8);
+		ray_y = all->ray_hits[i][0] * 8;
 		ray_x = (all->ray_hits[i][1] * 8) - (start_x * 8);
-		m = ((ray_y) - (all->y * 8)) / ((ray_x) - x);
-		n = ((((all->y * 8) - (start_y * 8)) - (m * x)));
+		m = (ray_y - (all->y * 8)) / (ray_x - x);
+		n = (((all->y * 8) - (start_y * 8)) - (m * x));
 
 		if (x < ray_x)
 			sum_x = 1;
@@ -53,7 +53,8 @@ void	draw_ray_minimap(t_all *all, int start_y, int start_x, int offset[2])
 		while ((int)x != (int)ray_x)
 		{
 			y = (m * x) + n;
-			if (x < (all->map_width * 8) && x >= 0 && y < (all->map_height * 8) && y >= 0 && (int)x < (16 * 16) && (int)y < (16 * 16))
+			if (x < (all->map_width * 8) && x >= 0 && y < (all->map_height * 8)
+				&& y >= 0 && (int)x < (16 * 16) && (int)y < (16 * 16))
 				mlx_put_pixel(all->background, (int)x, (int)y, 0x0000ffff);
 			x += sum_x;
 		}
@@ -62,7 +63,7 @@ void	draw_ray_minimap(t_all *all, int start_y, int start_x, int offset[2])
 		ray_y = (all->ray_hits[i][0] * 8) - (start_y * 8);
 		ray_x = (all->ray_hits[i][1] * 8) - (start_x * 8);
 		m = ((ray_y) - y) / ((ray_x) - x);
-		n = ((((all->y * 8) - (start_y * 8)) - (m * x)));
+		n = (((all->y * 8) - (start_y * 8)) - (m * x));
 		if (y < ray_y)
 			sum_y = 1;
 		else
@@ -70,7 +71,8 @@ void	draw_ray_minimap(t_all *all, int start_y, int start_x, int offset[2])
 		while ((int)y != (int)ray_y)
 		{
 			x = (y - n) / m;
-			if (x < (all->map_width * 8) && x >= 0 && y < (all->map_height * 8) && y >= 0 && (int)x < (16 * 16) && (int)y < (16 * 16))
+			if (x < (all->map_width * 8) && x >= 0 && y < (all->map_height * 8)
+				&& y >= 0 && (int)x < (16 * 16) && (int)y < (16 * 16))
 				mlx_put_pixel(all->background, (int)x, (int)y, 0x0000ffff);
 			y += sum_y;
 		}
@@ -89,7 +91,6 @@ void	draw_minimap(t_all *all)
 	int start_offset_y;
 	int start_offset_x;
 	int player_dist = 16;
-	int offsets[2];
 
 	update_player_pos(all);
 	y = (int)round(all->y) - 16;
@@ -99,11 +100,11 @@ void	draw_minimap(t_all *all)
 		y = 0;
 	}
 	start_offset_y = y;
-	if (y >= all->map_height - 32  && all->map_height > 32)
-		y = all->map_height - 32;
-	if (start_offset_y > all->map_height - 32  && all->map_height > 32)
+	if (y >= (int)all->map_height - 32  && all->map_height > 32)
+		y = (int)all->map_height - 32;
+	if (start_offset_y > (int)all->map_height - 32  && all->map_height > 32)
 		start_offset_y = (int)all->map_height - 32;
-	while (y < (int)round(all->y) + 16 + y_offset_u && y < all->map_height)
+	while (y < (int)round(all->y) + 16 + y_offset_u && y < (int)all->map_height)
 	{
 		x = (int)round(all->x) - 16;
 		if (x < 0)
@@ -111,14 +112,14 @@ void	draw_minimap(t_all *all)
 			x_offset_l = -x;
 			x = 0;
 		}
-		if (x + 16 > all->map_width - 16 && all->map_width > 32)
+		if (x + 16 > (int)all->map_width - 16 && all->map_width > 32)
 			x = (int)all->map_width - 32;
 		start_offset_x = x;
-		if (start_offset_x >= all->map_width - 32 && all->map_width > 32)
+		if (start_offset_x >= (int)all->map_width - 32 && all->map_width > 32)
 			start_offset_x = (int)all->map_width - 32;
-		if (((int)round(all->x) + player_dist) > all->map_width)
+		if (((int)round(all->x) + player_dist) > (int)all->map_width)
 			player_dist = -((int)round(all->x) - (int)all->map_width);
-		while (x < (int)round(all->x) + player_dist + x_offset_l && x < all->map_width)
+		while (x < (int)round(all->x) + player_dist + x_offset_l && x < (int)all->map_width)
 		{
 			if (all->map[y][x] == 0 || all->map[y][x] == 2)
 			{
@@ -148,5 +149,5 @@ void	draw_minimap(t_all *all)
 		}
 		y++;
 	}
-	draw_ray_minimap(all, start_offset_y, start_offset_x, offsets);
+	draw_ray_minimap(all, start_offset_y, start_offset_x);
 }

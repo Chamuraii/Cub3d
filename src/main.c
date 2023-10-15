@@ -43,7 +43,7 @@ void	mouse(t_all *all)
 		}
 		++(all->mouse_counter);
 		mlx_get_mouse_pos(all->mlx, &(all->mouse_x_pos), &(all->mouse_y_pos));
-		all->z = good_angles(all, all->z
+		all->z = good_angles(all->z
 				- ((all->mouse_x_pos - (WIDTH / 2)) / 10));
 	}
 	if (mlx_is_mouse_down(all->mlx, MLX_MOUSE_BUTTON_LEFT))

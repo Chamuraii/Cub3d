@@ -216,7 +216,7 @@ char	**map_copy(t_all *all, char **matrix, int height)
 
 void	flood_fill(t_all *all, char **map, int y, int x)
 {
-	if (x < 0 || x == all->map_width || y < 0 || y == all->map_height || map[y][x] == '1' || map[y][x] == 'F')
+	if (x < 0 || x == (int)all->map_width || y < 0 || y == (int)all->map_height || map[y][x] == '1' || map[y][x] == 'F')
 		return ;
 	map[y][x] = 'F';
 	flood_fill(all, map, y + 1, x);
@@ -294,7 +294,7 @@ int	map_validator(t_all *all, char **str, int fd)
 			}
 			++i;
 		}
-		if (i > all->map_width)
+		if (i > (int)all->map_width)
 			all->map_width = i;
 		matrix[j++] = ft_strdup(*str);
 		free(*str);
@@ -303,7 +303,7 @@ int	map_validator(t_all *all, char **str, int fd)
 	if (!all->y || !all->x)
 		ft_exit(all, 4);
 	matrix[j] = 0;
-	if (i > all->map_height)
+	if (i > (int)all->map_height)
 		all->map_height = j;
 	all->map_cpy = map_copy(all, matrix, j);
 	all->map_char = map_copy(all, matrix, j);

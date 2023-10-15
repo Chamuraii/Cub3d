@@ -14,7 +14,7 @@
 
 /* GOOD_ANGLES : ensures to always have angles between 0 and 360 */
 
-double	good_angles(t_all *all, double ang)
+double	good_angles(double ang)
 {
 	while (ang >= 360)
 		ang -= 360;
@@ -29,11 +29,11 @@ int	diag_jump(t_all *all, int x, int y)
 {
 	x -= (int)all->x;
 	y -= (int)all->y;
-	if ((x == 1 && y == 1 || x == -1 && y == -1)
+	if (((x == 1 && y == 1) || (x == -1 && y == -1))
 		&& all->map[(int)all->y][(int)all->x + x] == 1
 		&& all->map[(int)all->y + y][(int)all->x] == 1)
 		return (0);
-	if ((x == -1 && y == 1 || x == 1 && y == -1)
+	if (((x == -1 && y == 1) || (x == 1 && y == -1))
 		&& all->map[(int)all->y][(int)all->x + x] == 1
 		&& all->map[(int)all->y - y][(int)all->x] == 1)
 		return (0);
@@ -82,9 +82,9 @@ void	my_hook(void *param)
 		move_player(all, cos((all->z + 90) * PI / 180),
 			-sin((all->z + 90) * PI / 180));
 	if (mlx_is_key_down(all->mlx, MLX_KEY_RIGHT))
-		all->z = good_angles(all, all->z - CAM_SPEED);
+		all->z = good_angles(all->z - CAM_SPEED);
 	else if (mlx_is_key_down(all->mlx, MLX_KEY_LEFT))
-		all->z = good_angles(all, all->z + CAM_SPEED);
+		all->z = good_angles(all->z + CAM_SPEED);
 	mouse(all);
 	rays(all);
 }

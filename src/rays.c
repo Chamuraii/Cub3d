@@ -61,7 +61,7 @@ void	cast(t_all *all, double rad, int o)
 		y = floor(all->y - o);
 		if (rad < 180)
 			y = ceil(all->y + o);
-		x = all->x + tan(good_angles(all, rad - 90) * PI / 180) * (y - all->y);
+		x = all->x + tan(good_angles(rad - 90) * PI / 180) * (y - all->y);
 		o ++;
 		if (is_wall_h(all, rad, x, y) || x > all->map_width)
 			break ;
@@ -72,7 +72,7 @@ void	cast(t_all *all, double rad, int o)
 		x = floor(all->x - o);
 		if (rad < 270 && rad > 90)
 			x = ceil(all->x + o);
-		y = all->y - tan(good_angles(all, rad - 180) * PI / 180) * (x - all->x);
+		y = all->y - tan(good_angles(rad - 180) * PI / 180) * (x - all->x);
 		o ++;
 		if (is_wall_v(all, rad, x, y) || y > all->map_height)
 			break ;
@@ -91,13 +91,13 @@ void	rays(t_all *all)
 	background(all);
 	while (rad <= FOV)
 	{
-		cast(all, good_angles(all, rad + all->z - FOV / 2), 0);
+		cast(all, good_angles(rad + all->z - FOV / 2), 0);
 		final(all, i);
 		i++;
 		all->ray_hits[i][0] = -1;
 		all->ray_hits[i][1] = -1;
-		what_side(all, good_angles(all, rad + all->z - FOV / 2));
-		draw_pixel_line(all, all->dist[0], good_angles(all, rad));
+		what_side(all, good_angles(rad + all->z - FOV / 2));
+		draw_pixel_line(all, all->dist[0], good_angles(rad));
 		all->ray_num++;
 		all->texture_counter = 0;
 		rad += 0.042;
