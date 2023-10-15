@@ -1,4 +1,16 @@
-# include "../include/cub3d.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   rgb_check.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jorgfern <jorgfern@student.42malaga.com>   +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/15 20:16:12 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/10/15 20:44:32 by jorgfern         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../include/cub3d.h"
 
 int	rgb_repeated_checker(t_all *all, int boole)
 {
@@ -33,7 +45,7 @@ int	rgb_validate_coma(char *str, int *comma_counter, int i)
 		return (1);
 	}
 	else if (str[i] || (*comma_counter > 2
-						|| (*comma_counter < 2 && !str[i])))
+			|| (*comma_counter < 2 && !str[i])))
 		return (0);
 	return (1);
 }

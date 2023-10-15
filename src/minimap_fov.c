@@ -1,4 +1,16 @@
-# include "../include/cub3d.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minimap_fov.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jorgfern <jorgfern@student.42malaga.com>   +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/15 20:06:35 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/10/15 20:45:16 by jorgfern         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../include/cub3d.h"
 
 void	update_player_pos(t_all *all)
 {
@@ -39,7 +51,7 @@ void	draw_fov(t_all *all, int start_y, int start_x, int i)
 	{
 		all->w = (y - all->n) / all->m;
 		if (all->w < all->map_width * 8 && all->w >= 0 && y < all->map_height
-															  * 8 && y >= 0 && (int)all->w < 256 && (int)y < 256)
+			* 8 && y >= 0 && (int)all->w < 256 && (int)y < 256)
 			mlx_put_pixel(all->background, (int)all->w, (int)y, 0x0000ffff);
 		y += sum_y;
 	}
@@ -66,7 +78,7 @@ void	draw_ray_minimap(t_all *all, int start_y, int start_x)
 		{
 			all->h = (all->m * x) + all->n;
 			if (x < all->map_width * 8 && x >= 0 && all->h < all->map_height
-															 * 8 && all->h >= 0 && (int)x < 256 && (int)all->h < 256)
+				* 8 && all->h >= 0 && (int)x < 256 && (int)all->h < 256)
 				mlx_put_pixel(all->background, (int)x, (int)all->h, 0x0000ffff);
 			x += sum_x;
 		}

@@ -1,4 +1,16 @@
-# include "../include/cub3d.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   texture_parser.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jorgfern <jorgfern@student.42malaga.com>   +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/15 20:15:29 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/10/15 20:42:57 by jorgfern         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../include/cub3d.h"
 
 int	cub_directions_validator(t_all *all, char *str)
 {
@@ -19,27 +31,27 @@ void	texture_map_check(t_all *all, int step, char *str, int j)
 {
 	if (step == 0)
 	{
-		if (all->NO_texture)
+		if (all->no_texture)
 			ft_exit(all, 3);
-		all->NO_texture = ft_strdup(str + j);
+		all->no_texture = ft_strdup(str + j);
 	}
 	else if (step == 1)
 	{
-		if (all->SO_texture)
+		if (all->so_texture)
 			ft_exit(all, 3);
-		all->SO_texture = ft_strdup(str + j);
+		all->so_texture = ft_strdup(str + j);
 	}
 	else if (step == 2)
 	{
-		if (all->WE_texture)
+		if (all->we_texture)
 			ft_exit(all, 3);
-		all->WE_texture = ft_strdup(str + j);
+		all->we_texture = ft_strdup(str + j);
 	}
 	else if (step == 3)
 	{
-		if (all->EA_texture)
+		if (all->ea_texture)
 			ft_exit(all, 3);
-		all->EA_texture = ft_strdup(str + j);
+		all->ea_texture = ft_strdup(str + j);
 	}
 }
 
@@ -55,7 +67,7 @@ int	texture_map_validator(t_all *all, char *str, int step)
 		ft_exit(all, 2);
 	ext = ft_strrchr(str, '.');
 	if ((!ft_strncmp(str, "NO", 2) || !ft_strncmp(str, "WE", 2)
-		 || !ft_strncmp(str, "SO", 2) || !ft_strncmp(str, "EA", 2))
+			|| !ft_strncmp(str, "SO", 2) || !ft_strncmp(str, "EA", 2))
 		&& !ft_strcmp(ext, ".png"))
 	{
 		texture_map_check(all, step, str, j);

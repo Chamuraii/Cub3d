@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sprites.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jorgfern <jorgfern@student.42malaga.com>   +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/15 20:24:08 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/10/15 20:44:09 by jorgfern         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/cub3d.h"
 
 void	start_gun(t_all *all)
@@ -13,7 +25,7 @@ void	start_gun(t_all *all)
 	down_right_point[0] = 276;
 	down_right_point[1] = 265;
 	all->gun_img = mlx_texture_area_to_image(all->mlx,
-											 all->gun, up_left_point, down_right_point);
+			all->gun, up_left_point, down_right_point);
 	mlx_image_to_window(all->mlx, all->gun_img, WIDTH - 276, HEIGHT - 265);
 }
 

@@ -1,4 +1,16 @@
-# include "../include/cub3d.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jorgfern <jorgfern@student.42malaga.com>   +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/15 20:13:50 by jorgfern          #+#    #+#             */
+/*   Updated: 2023/10/15 20:46:10 by jorgfern         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../include/cub3d.h"
 
 void	parser_init_2(t_all *all)
 {
@@ -29,10 +41,10 @@ void	parser_init(t_all *all)
 	all->map_cpy = 0;
 	all->map_char = 0;
 	all->map = 0;
-	all->NO_texture = 0;
-	all->SO_texture = 0;
-	all->WE_texture = 0;
-	all->EA_texture = 0;
+	all->no_texture = 0;
+	all->so_texture = 0;
+	all->we_texture = 0;
+	all->ea_texture = 0;
 	all->north = 0;
 	all->east = 0;
 	all->south = 0;
@@ -47,7 +59,7 @@ void	parser_init(t_all *all)
 void	parser_setter(t_all *all)
 {
 	all->floor_color = get_rgba(all->floor_color_rgb[0],
-								all->floor_color_rgb[1], all->floor_color_rgb[2], 255);
+			all->floor_color_rgb[1], all->floor_color_rgb[2], 255);
 	all->ceiling_color = get_rgba(all->ceiling_color_rgb[0],
-								  all->ceiling_color_rgb[1], all->ceiling_color_rgb[2], 255);
+			all->ceiling_color_rgb[1], all->ceiling_color_rgb[2], 255);
 }

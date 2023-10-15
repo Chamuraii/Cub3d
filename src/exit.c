@@ -6,7 +6,7 @@
 /*   By: jorgfern <jorgfern@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/29 22:19:30 by jorgfern          #+#    #+#             */
-/*   Updated: 2023/08/29 22:19:38 by jorgfern         ###   ########.fr       */
+/*   Updated: 2023/10/15 18:13:14 by jorgfern         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,10 @@ void	ft_map_free(t_all *all)
 void	ft_free(t_all *all)
 {
 	ft_map_free(all);
-	free(all->WE_texture);
-	free(all->EA_texture);
-	free(all->SO_texture);
-	free(all->NO_texture);
+	free(all->we_texture);
+	free(all->ea_texture);
+	free(all->so_texture);
+	free(all->no_texture);
 	free(all->north);
 	free(all->east);
 	free(all->south);
@@ -64,11 +64,11 @@ void	get_reason(int status)
 	else if (status == 4)
 		ft_printf("%s\n", "Error\n- INVALID MAP -");
 	else if (status == 5)
-		ft_printf("%s\n", "Error\n- FAILED OPENING MAP FILE -\n");
+		ft_printf("%s\n", "Error\n- FAILED OPENING MAP FILE -");
 	else if (status == 6)
-		ft_printf("%s\n", "Error\n- NOT A MAP -\n");
+		ft_printf("%s\n", "Error\n- NOT A MAP -");
 	else if (status == 7)
-		ft_printf("%s\n", "Error\n- INVALID ARGUMENTS -\n");
+		ft_printf("%s\n", "Error\n- INVALID ARGUMENTS -");
 }
 
 void	ft_exit(t_all *all, int status)
