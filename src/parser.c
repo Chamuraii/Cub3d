@@ -44,8 +44,6 @@ void	parser_init(t_all *all)
 	all->texture_counter = 0;
 	all->gun_img = 0;
 	all->gun_bool = 0;
-	all->i = 0;
-	all->j = 0;
 	all->mouse_counter = 0;
 	all->mouse_flag = 0;
 	all->next_line = 0;
@@ -156,14 +154,14 @@ int	rgb_validator(t_all *all, char *str, int boole)
 	while (str[i])
 	{
 		if (boole == 0)
-			all->floor_color_rgb[j++] = (ft_atoi(str + i) % 256);
+			all->floor_color_rgb[j++] = ft_atoi(str + i);
 		else
-			all->ceiling_color_rgb[j++] = (ft_atoi(str + i) % 256);
+			all->ceiling_color_rgb[j++] = ft_atoi(str + i);
 		while (ft_isdigit(str[i]))
 			++i;
-		if (str[i] == ',')
+		if (str[i] == ',' && comma_counter < 2)
 			++comma_counter;
-		else if (str[i])
+		else if (str[i] || comma_counter > 2)
 			ft_exit(all, 3);
 		if (!str[i++] && comma_counter != 2)
 			ft_exit(all, 3);
@@ -405,5 +403,6 @@ int	main_validator(t_all *all, char **argv, int argc)
 		ft_exit(all, 3);
 	parse_map(all);
 	parser_setter(all);
+	all->next_line = 0;
 	return (1);
 }

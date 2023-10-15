@@ -68,11 +68,15 @@ typedef struct s_all
 	char			**map_char;
 	char			**map_cpy;
 	int				**map;
-	unsigned int	i;
-	unsigned int	j;
 	unsigned int	texture_counter;
 	char	*next_line;
 	int 	is_there_map;
+	double		h;
+	double		w;
+	double		m;
+	double 		n;
+	int			a;
+	int 		b;
 
 	int 		mouse_counter;
 	int32_t	mouse_x_pos;
