@@ -29,6 +29,7 @@ typedef struct s_list
 	struct s_list	*next;
 }					t_list;
 
+int				ft_areCharInStr(char *str, char *characters);
 int				ft_isspace(char c);
 double			ft_atod(const char *str);
 float			ft_atof(const char *str);

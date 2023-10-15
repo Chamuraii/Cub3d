@@ -76,6 +76,7 @@ typedef struct s_all
 	double 		n;
 	int			a;
 	int 		b;
+	int 		player_count;
 
 	int 		mouse_counter;
 	int32_t	mouse_x_pos;
@@ -90,7 +91,7 @@ void	draw_minimap(t_all *all);
 unsigned int		get_pixel_color(t_all *all, double range);
 int					get_textures(t_all *all);
 void				gun(t_all *all);
-unsigned int get_rgba_img(uint8_t *pixels, unsigned int width, unsigned int y, double x);
+unsigned int get_rgb(uint8_t *pixels, uint32_t width, uint32_t y, double x);
 void	start_gun(t_all *all);
 unsigned int	get_rgba(int r, int g, int b, int a);
 void	mouse(t_all *all);
@@ -120,5 +121,57 @@ int		is_wall_v(t_all *all, int rad, double x, double y);
 void	cast(t_all *all, double rad, int o);
 void	rays(t_all *all);
 void	final(t_all *all, int i);
+
+void	paint_map(t_all *all, int offset_x, int offset_y, unsigned int color);
+void	paint_map_player(t_all *all, int offset_x, int offset_y);
+void	minimap_init_y(t_all *all, int *offset_y, int *y_off_u);
+void	minimap_init_x(t_all *all, int *off_x, int *x_off_l, int *player_dist);
+void	draw_minimap_2(t_all *all, int y_off_u, int x_off_l, int player_dist);
+void	draw_minimap(t_all *all);
+void	update_player_pos(t_all *all);
+int	get_sum(double x, double ray);
+void	draw_fov(t_all *all, int start_y, int start_x, int i);
+void	draw_ray_minimap(t_all *all, int start_y, int start_x);
+void	parser_init_2(t_all *all);
+void	parser_init(t_all *all);
+void	parser_setter(t_all *all);
+char	*get_next_line_no_nl(int fd);
+void	texture_map_check(t_all *all, int step, char *str, int j);
+int	texture_map_validator(t_all *all, char *str, int step);
+int	rgb_repeated_checker(t_all *all, int boole);
+int	rgb_validate_coma(char *str, int *comma_counter, int i);
+void	rgb_validator(t_all *all, char *str, int boole);
+int	cub_directions_validator(t_all *all, char *str);
+char	**map_copy(t_all *all, char *matrix[][1024], int height);
+void	flood_fill(t_all *all, char **map, int y, int x);
+int	flood_validator(t_all *all, char **map);
+void	map_validator_2(t_all *all, char **str, int i);
+void	map_validator_3(t_all *all, char *matrix[][1024], int i, int j);
+void	set_player(t_all *all, char **str, int i, int j);
+char	*get_line_map(char *matrix[][1024], char **str, int fd, int *j);
+int	map_validator(t_all *all, char **str, int fd);
+int	cub_line_validator(t_all *all, char **str, int fd);
+int	cub_validator(t_all *all, char **argv, int fd, char **str);
+void	parse_map(t_all *all);
+int	main_validator(t_all *all, char **argv, int argc);
+int	get_textures(t_all *all);
+unsigned int	get_rgba(int r, int g, int b, int a);
+unsigned int	get_rgb(uint8_t *pixels, uint32_t width, uint32_t y, double x);
+unsigned int	get_pixel_color(t_all *all, double range);
+void	start_gun(t_all *all);
+void	gun1(t_all *all, uint32_t *up, uint32_t *down, int *counter);
+void	gun2(t_all *all, uint32_t *up, uint32_t *down, int *counter);
+void	gun3(t_all *all, uint32_t *up, uint32_t *down, int *counter);
+void	gun4(t_all *all, uint32_t *up, uint32_t *down, int *counter);
+void	gun5(t_all *all, uint32_t *up, uint32_t *down, int *counter);
+void	gun6(t_all *all, uint32_t *up, uint32_t *down, int *counter);
+void	gun(t_all *all);
+
+
+
+
+
+
+
 
 #endif

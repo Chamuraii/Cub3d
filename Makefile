@@ -1,7 +1,7 @@
 # Nombre del programa
 NAME       = Cub3d
 # Flags de compilacion
-FLAGS      = -g
+FLAGS      = -Wall -Wextra -Werror -g
 # Directorios
 SRC_DIR    = ./src/
 OBJ_DIR    = ./obj/
