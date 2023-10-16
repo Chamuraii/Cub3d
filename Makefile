@@ -68,9 +68,9 @@ SRC_BONUS =	src_bonus/animation_bonus.c \
                 	src_bonus/sprites_bonus.c \
                 	src_bonus/texture_bonus.c \
 
-OBJ_FILES = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
+OBJ_FILES = $(SRC_FILES:src/%.c=obj/%.o)
 
-OBJ_BONUS_FILES = $(patsubst $(SRC_BONUS_DIR)/%.c,$(OBJ_BONUS_DIR)/%.o,$(SRC_BONUS))
+OBJ_BONUS_FILES = $(SRC_BONUS:src_bonus/%.c=obj_bonus/%.o)
 
 all: $(NAME)
 
