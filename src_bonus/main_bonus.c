@@ -28,6 +28,8 @@ int	main(int argc, char **argv)
 	all.background = mlx_new_image(all.mlx, WIDTH, HEIGHT);
 	mlx_image_to_window(all.mlx, all.background, 0, 0);
 	rays(&all);
+	start_gun(&all);
+	mlx_key_hook(all.mlx, &my_key_hook, ((void *)&all));
 	mlx_loop_hook(all.mlx, my_hook, ((void *)&all));
 	mlx_loop(all.mlx);
 	ft_exit(&all, 0);

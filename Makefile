@@ -1,15 +1,16 @@
 # Nombre del programa
-NAME       = Cub3d
+NAME       = cub3D
 # Flags de compilacion
-FLAGS      = -Wall -Wextra -Werror -g
+FLAGS      = -Wall -Wextra -Werror
 # Directorios
 SRC_DIR    = ./src/
+SRC_BONUS  = ./src_bonus/
 OBJ_DIR    = ./obj/
 INC_DIR    = ./include/
 LIBFT_DIR  = ./libft/
 MLX_DIR    = ./MLX42/
 # Archivos fuentes y objetos
-SRC_FILES  =	animation.c \
+SRCS_FILES = 	animation.c \
 				exit.c \
 				flood_fill.c \
 				get_lines.c \
@@ -30,10 +31,33 @@ SRC_FILES  =	animation.c \
 				texture_parser.c \
 				textures.c
 
+SRCS_BONUS = 	animation_bonus.c \
+				exit_bonus.c \
+				flood_fill_bonus.c \
+				get_lines_bonus.c \
+				get_rgba_bonus.c \
+				hooks_bonus.c \
+				init_bonus.c \
+				main_bonus.c \
+				map_validator_bonus.c \
+				minimap_bonus.c \
+				minimap_fov_bonus.c \
+				minimap_main_bonus.c \
+				move_bonus.c \
+				paint_bonus.c \
+				parser_main_bonus.c \
+				rays_bonus.c \
+				rgb_check_bonus.c \
+				sprites_bonus.c \
+				texture_parser_bonus.c \
+				textures_bonus.c
+
 OBJ_FILES  = $(notdir $(SRC_FILES:.c=.o))
-# Direcciones
+OBJ_BONUS  = $(notdir $(SRC_BONUS:.c=.o))
 SRC        = $(addprefix $(SRC_DIR),$(SRC_FILES))
+SRCB        = $(addprefix $(SRC_BONUS),$(SRC_BONUS))
 OBJ        = $(addprefix $(OBJ_DIR),$(OBJ_FILES))
+OBJB        = $(addprefix $(OBJ_DIR),$(OBJ_BONUS))
 LIBFT      = $(addprefix $(LIBFT_DIR),libft.a)
 MLX        = $(addprefix $(MLX_DIR), libmlx42.a)
 
@@ -54,6 +78,11 @@ $(MLX):
 $(NAME): $(OBJ)
 	@echo "\033[0;32mCompiling..."
 	@gcc $(OBJ) -lglfw -L $(BREW) -o $(NAME) $(LIBFT) $(MLX)
+	@echo "\033[0m$(NAME) \033[0;32mgenerated!"
+
+bonus : $(OBJB)
+	@echo "\033[0;32mBonus compiling..."
+	@gcc $(OBJB) -lglfw -L $(BREW) -o $(NAME) $(LIBFT) $(MLX)
 	@echo "\033[0m$(NAME) \033[0;32mgenerated!"
 
 clean:
