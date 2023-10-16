@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 20:34:11 by jchamak           #+#    #+#             */
-/*   Updated: 2023/10/15 18:13:14 by jorgfern         ###   ########.fr       */
+/*   Updated: 2023/10/16 13:30:05 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,6 @@ void	rays(t_all *all)
 		all->texture_counter = 0;
 		rad += 0.042;
 	}
-	all->ray_hits[i][0] = -1;
-	all->ray_hits[i][1] = -1;
-	draw_minimap(all);
 }
 
 /* FINAL : after getting two distances from the player's position to the closest

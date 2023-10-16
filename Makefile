@@ -1,100 +1,117 @@
-# Nombre del programa
-NAME       = cub3D
-# Flags de compilacion
-FLAGS      = -Wall -Wextra -Werror
-# Directorios
-SRC_DIR    = ./src/
-SRC_BONUS  = ./src_bonus/
-OBJ_DIR    = ./obj/
-INC_DIR    = ./include/
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/08/17 09:44:16 by ysmeding          #+#    #+#              #
+#    Updated: 2023/10/16 13:55:39 by jchamak          ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+NAME = cub3D
+
+NAME_BONUS = cub3D_bonus
+
+CC = cc
+
+CFLAGS = -Wall -Wextra -Werror
+
+LIBFT = ./libft/libft.a
+
+MLX = ./MLX42/libmlx42.a
+
+BREW = -I include -lglfw -L"/Users/$(USER)/.brew/opt/glfw/lib/"
+
+SRC_DIR = src
+
+OBJ_DIR = obj
+
 LIBFT_DIR  = ./libft/
-MLX_DIR    = ./MLX42/
-# Archivos fuentes y objetos
-SRCS_FILES = 	animation.c \
-				exit.c \
-				flood_fill.c \
-				get_lines.c \
-				get_rgba.c \
-				hooks.c \
-				init.c \
-				main.c \
-				map_validator.c \
-				minimap.c \
-				minimap_fov.c \
-				minimap_main.c \
-				move.c \
-				paint.c \
-				parser_main.c \
-				rays.c \
-				rgb_check.c \
-				sprites.c \
-				texture_parser.c \
-				textures.c
 
-SRCS_BONUS = 	animation_bonus.c \
-				exit_bonus.c \
-				flood_fill_bonus.c \
-				get_lines_bonus.c \
-				get_rgba_bonus.c \
-				hooks_bonus.c \
-				init_bonus.c \
-				main_bonus.c \
-				map_validator_bonus.c \
-				minimap_bonus.c \
-				minimap_fov_bonus.c \
-				minimap_main_bonus.c \
-				move_bonus.c \
-				paint_bonus.c \
-				parser_main_bonus.c \
-				rays_bonus.c \
-				rgb_check_bonus.c \
-				sprites_bonus.c \
-				texture_parser_bonus.c \
-				textures_bonus.c
+SRC_BONUS_DIR = src_bonus
 
-OBJ_FILES  = $(notdir $(SRC_FILES:.c=.o))
-OBJ_BONUS  = $(notdir $(SRC_BONUS:.c=.o))
-SRC        = $(addprefix $(SRC_DIR),$(SRC_FILES))
-SRCB        = $(addprefix $(SRC_BONUS),$(SRC_BONUS))
-OBJ        = $(addprefix $(OBJ_DIR),$(OBJ_FILES))
-OBJB        = $(addprefix $(OBJ_DIR),$(OBJ_BONUS))
-LIBFT      = $(addprefix $(LIBFT_DIR),libft.a)
-MLX        = $(addprefix $(MLX_DIR), libmlx42.a)
+OBJ_BONUS_DIR = obj_bonus
 
-BREW = "/Users/$(USER)/.brew/opt/glfw/lib/"
+SRC_FILES = 	src/exit.c \
+                src/flood_fill.c \
+                src/get_lines.c \
+                src/get_rgba.c \
+                src/init.c \
+                src/main.c \
+                src/map_validator.c \
+                src/move.c \
+                src/paint.c \
+                src/parser_main.c \
+                src/rays.c \
+                src/rgb_check.c \
+                src/texture.c \
 
-all: obj $(LIBFT) $(NAME)
-obj:
-	@mkdir -p $(OBJ_DIR)
-$(OBJ_DIR)%.o: $(SRC_DIR)%.c
-	@gcc $(FLAGS) -I $(INC_DIR) -o $@ -c $(SRC_DIR)$(notdir $<)
+SRC_BONUS =	src_bonus/animation_bonus.c \
+               		src_bonus/exit_bonus.c \
+                	src_bonus/flood_fill_bonus.c \
+                	src_bonus/get_lines_bonus.c \
+               		src_bonus/get_rgba_bonus.c \
+                	src_bonus/hooks_bonus.c \
+                	src_bonus/init_bonus.c \
+                	src_bonus/main_bonus.c \
+                	src_bonus/map_validator_bonus.c \
+                	src_bonus/minimap_bonus.c \
+                	src_bonus/minimap_fov_bonus.c \
+                	src_bonus/minimap_main_bonus.c \
+                	src_bonus/move_bonus.c \
+                	src_bonus/paint_bonus.c \
+                	src_bonus/parser_main_bonus.c \
+                	src_bonus/rays_bonus.c \
+                	src_bonus/rgb_check_bonus.c \
+                	src_bonus/sprites_bonus.c \
+                	src_bonus/texture_bonus.c \
+
+OBJ_FILES = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
+
+OBJ_BONUS_FILES = $(patsubst $(SRC_BONUS_DIR)/%.c,$(OBJ_BONUS_DIR)/%.o,$(SRC_BONUS))
+
+all: $(NAME)
+
+$(NAME): $(LIBFT) $(OBJ_FILES)
+	@echo "\033[0;32mCompiling..."
+	@ $(CC) $(CFLAGS) $(OBJ_FILES) $(LIBFT) -o $(NAME) $(MLX) $(BREW)
+
+bonus: $(NAME_BONUS)
+
+$(NAME_BONUS): $(LIBFT) $(OBJ_BONUS_FILES)
+	@echo "\033[0;32mBonus compiling..."
+	@ $(CC) $(CFLAGS) $(OBJ_BONUS_FILES) $(LIBFT) -o $(NAME_BONUS) $(MLX) $(BREW)
 
 $(LIBFT):
-	@$(MAKE) -C $(LIBFT_DIR)
+	@ make -C $(LIBFT_DIR) all
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
+	@$(CC) $(CFLAGS) -c -o $@ $<
+
+$(OBJ_BONUS_DIR)/%.o: $(SRC_BONUS_DIR)/%.c
+	@mkdir -p $(OBJ_BONUS_DIR)
+	@$(CC) $(CFLAGS) -c -o $@ $<
 
 $(MLX):
-	@$(MAKE) -C $(MLX_DIR)
-
-$(NAME): $(OBJ)
-	@echo "\033[0;32mCompiling..."
-	@gcc $(OBJ) -lglfw -L $(BREW) -o $(NAME) $(LIBFT) $(MLX)
-	@echo "\033[0m$(NAME) \033[0;32mgenerated!"
-
-bonus : $(OBJB)
-	@echo "\033[0;32mBonus compiling..."
-	@gcc $(OBJB) -lglfw -L $(BREW) -o $(NAME) $(LIBFT) $(MLX)
-	@echo "\033[0m$(NAME) \033[0;32mgenerated!"
+	@ make -C ./MLX all
 
 clean:
-	@rm -rf $(OBJ_DIR)
+	@echo "\033[0;31mCleaning..."
+	@ rm -rf $(OBJ_DIR)
+	@ rm -rf $(OBJ_BONUS_DIR)
 	@$(MAKE) -C $(LIBFT_DIR) clean
-	@echo "\033[0;31mCleaning"
 
 fclean: clean
-	@rm -f $(NAME)
-	@$(MAKE) -C $(LIBFT_DIR) fclean
 	@echo "$(NAME) removed!\033[0m"
+	@ rm -rf $(NAME)
+	@ rm -rf $(NAME_BONUS)
+	@$(MAKE) -C $(LIBFT_DIR) fclean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+re_bonus: fclean bonus
+
+.PHONY: re clean fclean all bonus

@@ -6,7 +6,7 @@
 /*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/13 19:18:49 by jchamak           #+#    #+#             */
-/*   Updated: 2023/10/15 18:13:14 by jorgfern         ###   ########.fr       */
+/*   Updated: 2023/10/16 13:17:16 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,5 @@ void	my_hook(void *param)
 		all->z = good_angles(all->z - CAM_SPEED);
 	else if (mlx_is_key_down(all->mlx, MLX_KEY_LEFT))
 		all->z = good_angles(all->z + CAM_SPEED);
-	mouse(all);
 	rays(all);
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   exit_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jorgfern <jorgfern@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: jchamak <jchamak@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/29 22:19:30 by jorgfern          #+#    #+#             */
-/*   Updated: 2023/10/15 18:13:14 by jorgfern         ###   ########.fr       */
+/*   Updated: 2023/10/16 13:35:25 by jchamak          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,6 @@ void	ft_free(t_all *all)
 	free(all->gun);
 	free(all->next_line);
 }
-
-/* FT_EXIT : closes program and display given message */
 
 void	get_reason(int status)
 {
