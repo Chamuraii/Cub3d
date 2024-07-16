@@ -53,7 +53,7 @@ int	flood_validator(t_all *all, char **map)
 	return (1);
 }
 
-char	**map_copy(t_all *all, char *matrix[][1024], int height)
+char	**map_copy(t_all *all, char ***matrix, int height)
 {
 	int		i;
 	char	**map_cpy;

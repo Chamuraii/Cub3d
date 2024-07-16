@@ -54,8 +54,8 @@ void	move_player(t_all *all, double x, double y)
 		[(int)floor(all->x + x - 0.05)] != 1)
 		&& diag_jump(all, all->x + x, all->y + y))
 	{
-		all->x += x;
-		all->y += y;
+		all->x -= x;
+		all->y -= y;
 	}
 }
 
@@ -69,10 +69,10 @@ void	my_hook(void *param)
 	all = (t_all *)param;
 	if (mlx_is_key_down(all->mlx, MLX_KEY_ESCAPE))
 		ft_exit(all, 0);
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_W))
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_S))
 		move_player(all, -cos(all->z * PI / 180),
 			sin(all->z * PI / 180));
-	else if (mlx_is_key_down(all->mlx, MLX_KEY_S))
+	else if (mlx_is_key_down(all->mlx, MLX_KEY_W))
 		move_player(all, cos(all->z * PI / 180),
 			-sin(all->z * PI / 180));
 	else if (mlx_is_key_down(all->mlx, MLX_KEY_A))
@@ -87,4 +87,5 @@ void	my_hook(void *param)
 		all->z = good_angles(all->z + CAM_SPEED);
 	mouse(all);
 	rays(all);
+	draw_minimap(all);
 }

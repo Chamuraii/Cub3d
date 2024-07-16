@@ -88,7 +88,6 @@ void	rays(t_all *all)
 
 	rad = 0;
 	i = 0;
-	background(all);
 	while (rad <= FOV)
 	{
 		cast(all, good_angles(rad + all->z - FOV / 2), 0);
@@ -97,14 +96,11 @@ void	rays(t_all *all)
 		all->ray_hits[i][0] = -1;
 		all->ray_hits[i][1] = -1;
 		what_side(all, good_angles(rad + all->z - FOV / 2));
-		draw_pixel_line(all, all->dist[0], good_angles(rad));
+		draw_pixel_line(all, all->dist[0]);
 		all->ray_num++;
 		all->texture_counter = 0;
-		rad += 0.042;
+		rad += 0.04285714285;
 	}
-	all->ray_hits[i][0] = -1;
-	all->ray_hits[i][1] = -1;
-	draw_minimap(all);
 }
 
 /* FINAL : after getting two distances from the player's position to the closest

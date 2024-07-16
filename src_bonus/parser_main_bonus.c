@@ -28,13 +28,10 @@ int	cub_line_validator(t_all *all, char **str, int fd)
 
 int	cub_validator(t_all *all, char **argv, int fd, char **str)
 {
-	int	i;
-
 	fd = open(argv[1], 0);
 	if (fd < 0)
 		ft_exit(all, 5);
 	*str = get_next_line_no_nl(fd);
-	i = 0;
 	if (!(*str))
 		ft_exit(all, 3);
 	while (*str)
@@ -48,7 +45,6 @@ int	cub_validator(t_all *all, char **argv, int fd, char **str)
 		cub_line_validator(all, str, fd);
 		free(*str);
 		*str = get_next_line_no_nl(fd);
-		++i;
 	}
 	free(*str);
 	close(fd);

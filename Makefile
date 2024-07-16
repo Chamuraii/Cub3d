@@ -14,15 +14,24 @@ NAME = cub3D
 
 NAME_BONUS = cub3D_bonus
 
-CC = cc
+CC = clang -fsanitize=address,undefined
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 
 LIBFT = ./libft/libft.a
 
 MLX = ./MLX42/libmlx42.a
+MLX_DIR = ./MLX42
 
 BREW = -I include -lglfw -L"/Users/$(USER)/.brew/opt/glfw/lib/"
+
+ifeq ($(ARCH_LINUX), yes)
+    # Arch Linux detected, include GLFW3
+    BREW = $(shell pkg-config --cflags glfw3)
+else
+    # Not Arch Linux or GLFW3 not available
+    $(info GLFW3 will not be included)
+endif
 
 SRC_DIR = src
 
@@ -74,41 +83,43 @@ OBJ_BONUS_FILES = $(SRC_BONUS:src_bonus/%.c=obj_bonus/%.o)
 
 all: $(NAME)
 
-$(NAME): $(LIBFT) $(OBJ_FILES)
+$(NAME): $(LIBFT) $(MLX) $(OBJ_FILES)
 	@echo "\033[0;32mCompiling..."
 	@ $(CC) $(CFLAGS) $(OBJ_FILES) $(LIBFT) -o $(NAME) $(MLX) $(BREW)
 
 bonus: $(NAME_BONUS)
 
-$(NAME_BONUS): $(LIBFT) $(OBJ_BONUS_FILES)
+$(NAME_BONUS): $(LIBFT) $(MLX) $(OBJ_BONUS_FILES)
 	@echo "\033[0;32mBonus compiling..."
-	@ $(CC) $(CFLAGS) $(OBJ_BONUS_FILES) $(LIBFT) -o $(NAME_BONUS) $(MLX) $(BREW)
+	@ $(CC) $(shell pkg-config --libs glfw3) $(CFLAGS) $(OBJ_BONUS_FILES) $(LIBFT) -o $(NAME_BONUS) $(MLX) $(BREW)
 
 $(LIBFT):
 	@ make -C $(LIBFT_DIR) all
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
-	@$(CC) $(CFLAGS) -c -o $@ $<
+	@$(CC) $(shell pkg-config --cflags glfw3) $(CFLAGS) -c -o $@ $<
 
 $(OBJ_BONUS_DIR)/%.o: $(SRC_BONUS_DIR)/%.c
 	@mkdir -p $(OBJ_BONUS_DIR)
 	@$(CC) $(CFLAGS) -c -o $@ $<
 
 $(MLX):
-	@ make -C ./MLX all
+	@ make -C $(MLX_DIR)
 
 clean:
 	@echo "\033[0;31mCleaning..."
 	@ rm -rf $(OBJ_DIR)
 	@ rm -rf $(OBJ_BONUS_DIR)
 	@$(MAKE) -C $(LIBFT_DIR) clean
+	@$(MAKE) -C $(MLX_DIR) clean
 
 fclean: clean
 	@echo "$(NAME) removed!\033[0m"
 	@ rm -rf $(NAME)
 	@ rm -rf $(NAME_BONUS)
 	@$(MAKE) -C $(LIBFT_DIR) fclean
+	@$(MAKE) -C $(MLX_DIR) fclean
 
 re: fclean all
 

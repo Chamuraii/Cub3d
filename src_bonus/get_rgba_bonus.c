@@ -17,38 +17,23 @@ unsigned int	get_rgba(int r, int g, int b, int a)
 	return (r << 24 | g << 16 | b << 8 | a);
 }
 
-unsigned int	get_rgb(uint8_t *pixels, uint32_t width, uint32_t y, double x)
+unsigned int	get_rgb(mlx_texture_t *side, uint32_t y, double x)
 {
-	return ((pixels[(int)((y * width) + round(x)) *4] << 24)
-			| (pixels[(int)((y * width) + round(x)) *4 + 1] << 16)
-			| (pixels[(int)((y * width) + round(x)) *4 + 2] << 8)
-			| (pixels[(int)((y * width) + round(x)) *4 + 3]));
+	uint32_t xy;
+
+	xy = (int)(y + round(x)) * 4;
+	if ((y + round(x)) >= (side->height * side->width))
+		return 0;
+	return ((side->pixels[(int)xy] << 24)
+			| (side->pixels[(int)xy + 1] << 16)
+			| (side->pixels[(int)xy + 2] << 8)
+			| (side->pixels[(int)xy + 3]));
 }
 
-unsigned int	get_pixel_color(t_all *all, double range)
-{
-	mlx_texture_t	*texture;
-	double			x;
-	double			scale_y;
-	int				y;
 
-	texture = all->side;
-	scale_y = (double)texture->height / range;
-	if (range > HEIGHT && !all->texture_counter)
-		all->texture_counter = (unsigned int)((round(range) - HEIGHT) / 2);
-	y = (int)(all->texture_counter++ *scale_y);
-	if (all->ray_hits[all->ray_num][1] == -1)
-		all->ray_num = 0;
-	if (!all->dir)
-		x = all->ray_hits[all->ray_num][1];
-	else
-		x = all->ray_hits[all->ray_num][0];
-	if (!all->dir && all->ray_hits[all->ray_num][0] < all->y)
-		x = (x - (int) x);
-	else if (all->dir && all->ray_hits[all->ray_num][1] > all->x)
-		x = (x - (int) x);
-	else
-		x = 1 - (x - (int) x);
-	x = (texture->width - 1) * x;
-	return (get_rgb(texture->pixels, texture->width, y, x));
+
+unsigned int	get_pixel_color(t_all *all, double scale_y, double y)
+{
+	y = (int)(y * scale_y);
+	return (get_rgb(all->side, y * all->side->width, all->texture_x));
 }

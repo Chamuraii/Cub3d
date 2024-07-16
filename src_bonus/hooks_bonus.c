@@ -36,7 +36,7 @@ void	mouse(t_all *all)
 {
 	if (all->mouse_flag)
 	{
-		if (all->mouse_counter == 3)
+		if (all->mouse_counter >= 3)
 		{
 			mlx_set_mouse_pos(all->mlx, WIDTH / 2, HEIGHT / 2);
 			all->mouse_counter = 0;
