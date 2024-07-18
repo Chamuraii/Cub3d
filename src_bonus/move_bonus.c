@@ -87,4 +87,5 @@ void	my_hook(void *param)
 		all->z = good_angles(all->z + CAM_SPEED);
 	mouse(all);
 	rays(all);
+	draw_minimap(all);
 }

@@ -20,7 +20,7 @@ void	map_validator_2(t_all *all, char **str, int i)
 		ft_exit(all, 4);
 }
 
-void	map_validator_3(t_all *all, char *matrix[][1024], int i, int j)
+void	map_validator_3(t_all *all, char ***matrix, int i, int j)
 {
 	if (!all->y || !all->x)
 		ft_exit(all, 4);
@@ -61,24 +61,32 @@ int	map_validator(t_all *all, char **str, int fd)
 {
 	int		i;
 	int		j;
-	char	*matrix[1024];
+	char	**matrix;
 
-	j = 0;
-	while (*str)
+	j = ft_strlen(*str);
+	*str = ft_strjoin(*str, ft_strdup("\n"));
+	while (j < (int)ft_strlen(*str))
 	{
-		i = 0;
-		map_validator_2(all, str, i);
-		while (str[0][i])
-		{
-			if (!ft_strchr("01NESW", str[0][i]) && !ft_isspace(str[0][i]))
-				ft_exit(all, 4);
-			set_player(all, str, i, j);
-			++i;
-		}
-		if (i > (int)all->map_width)
-			all->map_width = i;
-		*str = get_line_map(&matrix, str, fd, &j);
+		j = ft_strlen(*str);
+		*str = ft_strjoin(*str, get_next_line(fd));
 	}
-	map_validator_3(all, &matrix, i, j);
+	matrix = ft_split(*str, '\n');
+	i = 0;
+	while (matrix[i])
+	{
+		j = 0;
+		map_validator_2(all, &(matrix[i]), j);
+		while (matrix[i][j])
+		{
+			if (!ft_strchr("01NESW", matrix[i][j]) && !ft_isspace(matrix[i][j]))
+				ft_exit(all, 4);
+			set_player(all, &(matrix[i]), j, i);
+			++j;
+		}
+		if (j > (int)all->map_width)
+			all->map_width = j;
+		++i;
+	}
+	map_validator_3(all, &matrix, j, i);
 	return (1);
 }

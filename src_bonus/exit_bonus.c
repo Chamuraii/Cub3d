@@ -39,11 +39,6 @@ void	ft_free(t_all *all)
 	free(all->ea_texture);
 	free(all->so_texture);
 	free(all->no_texture);
-	free(all->north);
-	free(all->east);
-	free(all->south);
-	free(all->west);
-	free(all->gun);
 	free(all->next_line);
 }
 

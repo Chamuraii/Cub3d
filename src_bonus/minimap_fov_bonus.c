@@ -66,7 +66,7 @@ void	draw_ray_minimap(t_all *all, int start_y, int start_x)
 	int		i;
 
 	i = 0;
-	while (all->ray_hits[i][0] != -1)
+	while (i < WIDTH - 1)
 	{
 		x = (all->x * 8) - (start_x * 8);
 		ray_y = all->ray_hits[i][0] * 8;

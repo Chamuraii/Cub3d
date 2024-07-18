@@ -18,12 +18,12 @@
 # include <unistd.h>
 # include <math.h>
 # include <fcntl.h>
-# include "../libft/libft.h"
+# include "../libft/include/libft.h"
 # include "../MLX42/include/MLX42/MLX42.h"
 
 # define PI 3.14159265358979323846
-# define HEIGHT 700
-# define WIDTH 1050
+# define HEIGHT 720
+# define WIDTH 1280
 # define FOV 45
 # define CAM_SPEED 1.5
 # define SPEED 1
@@ -45,11 +45,12 @@ typedef struct s_all
 	double			x;
 	double			y;
 	double			z;
+	double			angle_change;
 	double			oldx;
 	double			oldy;
 	int				oldchar;
 	double			ray_hits[88000][2];
-	unsigned int	ray_num;
+	int				ray_num;
 	double			dist[3];
 	double			finalx[3];
 	double			finaly[3];
@@ -58,6 +59,9 @@ typedef struct s_all
 	char			*so_texture;
 	char			*we_texture;
 	char			*ea_texture;
+	double			texture_x;
+	double			range;
+	double			texture_range;
 	int				floor_color_rgb[4];
 	int				ceiling_color_rgb[4];
 	unsigned int	floor_color;
@@ -97,8 +101,7 @@ void			my_hook(void *param);
 
 // paint.c
 
-void			background(t_all *all);
-void			draw_pixel_line(t_all *all, double dist, double rad);
+void			draw_pixel_line(t_all *all, double dist);
 void			what_side(t_all *all, double rad);
 
 // rays.c
@@ -134,13 +137,13 @@ int				rgb_repeated_checker(t_all *all, int boole);
 int				rgb_validate_coma(char *str, int *comma_counter, int i);
 void			rgb_validator(t_all *all, char *str, int boole);
 int				cub_directions_validator(t_all *all, char *str);
-char			**map_copy(t_all *all, char *matrix[][1024], int height);
+char			**map_copy(t_all *all, char ***matrix, int height);
 void			flood_fill(t_all *all, char **map, int y, int x);
 int				flood_validator(t_all *all, char **map);
 void			map_validator_2(t_all *all, char **str, int i);
-void			map_validator_3(t_all *all, char *matrix[][1024], int i, int j);
+void			map_validator_3(t_all *all, char ***matrix, int i, int j);
 void			set_player(t_all *all, char **str, int i, int j);
-char			*get_line_map(char *matrix[][1024], char **str, int fd, int *j);
+char			*get_line_map(char ***matrix, char **str, int fd, int *j);
 int				map_validator(t_all *all, char **str, int fd);
 int				cub_line_validator(t_all *all, char **str, int fd);
 int				cub_validator(t_all *all, char **argv, int fd, char **str);
@@ -148,8 +151,8 @@ void			parse_map(t_all *all);
 int				main_validator(t_all *all, char **argv, int argc);
 int				get_textures(t_all *all);
 unsigned int	get_rgba(int r, int g, int b, int a);
-unsigned int	get_rgb(uint8_t *pixels, uint32_t width, uint32_t y, double x);
-unsigned int	get_pixel_color(t_all *all, double range);
+unsigned int	get_rgb(t_all *all, mlx_texture_t *side, double y, double x, double step_size, double scale_y);
+unsigned int	get_pixel_color(t_all *all, double scale_y, double y);
 void			start_gun(t_all *all);
 void			gun1(t_all *all, uint32_t *up, uint32_t *down, int *counter);
 void			gun2(t_all *all, uint32_t *up, uint32_t *down, int *counter);

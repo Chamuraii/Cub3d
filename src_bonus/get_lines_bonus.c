@@ -24,7 +24,7 @@ char	*get_next_line_no_nl(int fd)
 	return (str);
 }
 
-char	*get_line_map(char *matrix[][1024], char **str, int fd, int *j)
+char	*get_line_map(char ***matrix, char **str, int fd, int *j)
 {
 	(*matrix)[(*j)++] = ft_strdup(*str);
 	free(*str);

@@ -12,59 +12,59 @@
 
 #include "../include/cub3d.h"
 
-/* BACKGROUND : paints the sky and the floor with the colors given by the map */
-
-void	background(t_all *all)
-{
-	int	x;
-	int	y;
-
-	x = -1;
-	y = -1;
-	while (++y < HEIGHT / 2 - 1)
-	{
-		while (++x < WIDTH)
-			mlx_put_pixel(all->background, x, y, all->ceiling_color);
-		x = -1;
-	}
-	y = HEIGHT / 2 - 1;
-	while (++y < HEIGHT - 1)
-	{
-		while (++x < WIDTH)
-			mlx_put_pixel(all->background, x, y, all->floor_color);
-		x = -1;
-	}
-}
-
 /* DRAW_PIXEL_LINE : draws the walls by calculating their size (depending on the
 distance), and their position (depending on the relative angle)*/
 
-void	draw_pixel_line(t_all *all, double dist, double rad)
+void ft_texture_orientation(t_all *all, double range)
+{
+	all->range = range;
+	if (all->ray_num >= WIDTH)
+		all->ray_num = 0;
+	if (!all->dir)
+	{
+		all->texture_x = all->ray_hits[all->ray_num][1];
+		if (all->ray_hits[all->ray_num][0] < all->y)
+			all->texture_x = all->texture_x - (int)all->texture_x;
+		else
+			all->texture_x = 1 - (all->texture_x - (int)all->texture_x);
+	}
+	else
+	{
+		all->texture_x = all->ray_hits[all->ray_num][0];
+		if (all->ray_hits[all->ray_num][1] > all->x)
+			all->texture_x = all->texture_x - (int)all->texture_x;
+		else
+			all->texture_x = 1 - (all->texture_x - (int)all->texture_x);
+	}
+	all->texture_x = (all->side->width - 1) * all->texture_x;
+}
+
+void	draw_pixel_line(t_all *all, double dist)
 {
 	double		i;
 	int			start;
 	int			end;
-	int			wide;
 
-	i = 1;
-	if (dist > 1)
-		i = 1 / dist;
+	i = 1 / dist;
 	start = (HEIGHT * (1 - i)) / 2;
-	wide = -rad * WIDTH / FOV - 1;
-	if (rad == 0)
-		wide = WIDTH - 2;
-	end = HEIGHT - start;
-	start ++;
-	while (start < end && start > 0)
+	end = (HEIGHT * (1 + i)) / 2;
+	ft_texture_orientation(all, end - start);
+	all->texture_counter = start;
+	if (start < 0)
+		start = 0;
+	if (end > HEIGHT)
+		end = HEIGHT;
+	i = 0;
+	while (i < start)
+			mlx_put_pixel(all->background, all->ray_num, i++, all->ceiling_color);
+	while (start < end)
 	{
-		if (dist >= 1)
-			mlx_put_pixel(all->background, wide, start, get_pixel_color(
-					all, (double)(end - (HEIGHT * (1 - 1 / dist) / 2))));
-		else
-			mlx_put_pixel(all->background, wide, start, get_pixel_color(
-					all, (double)(end - (HEIGHT * (1 - 1 / dist)))));
+		mlx_put_pixel(all->background, all->ray_num, start, get_pixel_color(
+				all, all->side->height / all->range, start - all->texture_counter));
 		++start;
 	}
+	while (end < HEIGHT)
+			mlx_put_pixel(all->background, all->ray_num, end++, all->floor_color);
 }
 
 /* WHAT_SIDE : depending on the side the player is looking at and the shortest
