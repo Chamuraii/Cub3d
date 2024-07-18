@@ -53,6 +53,7 @@ void	parser_init(t_all *all)
 	all->ceiling_color_rgb[0] = 256;
 	all->ceiling_color_rgb[1] = 256;
 	all->ceiling_color_rgb[2] = 256;
+	all->angle_change = (double)FOV / (double)WIDTH;
 	parser_init_2(all);
 }
 

@@ -2,9 +2,9 @@ NAME	=	libft.a
 
 AR		=	ar -rcs
 
-CC		=	clang -fsanitize=address,undefined
+CC		=	clang -O3
 
-FLAGS	=	-Wall -Werror -Wextra -g
+FLAGS	=	-Wall -Werror -Wextra
 
 #directories
 SRC_DIR					=	src/

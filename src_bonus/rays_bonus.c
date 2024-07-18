@@ -86,20 +86,18 @@ void	rays(t_all *all)
 	double	rad;
 	int		i;
 
-	rad = 0;
+	rad = all->angle_change * WIDTH;
 	i = 0;
-	while (rad <= FOV)
+	while (rad > 0)
 	{
 		cast(all, good_angles(rad + all->z - FOV / 2), 0);
 		final(all, i);
 		i++;
-		all->ray_hits[i][0] = -1;
-		all->ray_hits[i][1] = -1;
 		what_side(all, good_angles(rad + all->z - FOV / 2));
 		draw_pixel_line(all, all->dist[0]);
 		all->ray_num++;
 		all->texture_counter = 0;
-		rad += 0.04285714285;
+		rad -= all->angle_change;
 	}
 }
 

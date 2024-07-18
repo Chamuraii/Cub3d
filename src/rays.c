@@ -18,6 +18,8 @@ closest horizontal wall and the other, the vertical */
 
 int	is_wall_h(t_all *all, int rad, double x, double y)
 {
+	if (rad >= 180)
+		y -= 1e-9;
 	if (y <= 0 || y >= all->map_height || x <= 0 || x >= all->map_width
 		|| all->map[(int)y][(int)x] == 1)
 	{
@@ -32,6 +34,8 @@ int	is_wall_h(t_all *all, int rad, double x, double y)
 
 int	is_wall_v(t_all *all, int rad, double x, double y)
 {
+	if (rad >= 270 || rad < 90)
+		x -= 1e-9;
 	if (y <= 0 || y >= all->map_height || x <= 0 || x >= all->map_width
 		|| all->map[(int)y][(int)x] == 1)
 	{
@@ -82,20 +86,18 @@ void	rays(t_all *all)
 	double	rad;
 	int		i;
 
-	rad = 0;
+	rad = all->angle_change * WIDTH;
 	i = 0;
-	while (rad <= FOV)
+	while (rad > 0)
 	{
 		cast(all, good_angles(rad + all->z - FOV / 2), 0);
 		final(all, i);
 		i++;
-		all->ray_hits[i][0] = -1;
-		all->ray_hits[i][1] = -1;
 		what_side(all, good_angles(rad + all->z - FOV / 2));
-		draw_pixel_line(all, all->dist[0], good_angles(rad));
+		draw_pixel_line(all, all->dist[0]);
 		all->ray_num++;
 		all->texture_counter = 0;
-		rad += 0.04285714285;
+		rad -= all->angle_change;
 	}
 }
 

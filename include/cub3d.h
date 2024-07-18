@@ -22,8 +22,8 @@
 # include "../MLX42/include/MLX42/MLX42.h"
 
 # define PI 3.14159265358979323846
-# define HEIGHT 700
-# define WIDTH 1050
+# define HEIGHT 720
+# define WIDTH 1280
 # define FOV 45
 # define CAM_SPEED 1.5
 # define SPEED 1
@@ -45,11 +45,12 @@ typedef struct s_all
 	double			x;
 	double			y;
 	double			z;
+	double			angle_change;
 	double			oldx;
 	double			oldy;
 	int				oldchar;
 	double			ray_hits[88000][2];
-	unsigned int	ray_num;
+	int				ray_num;
 	double			dist[3];
 	double			finalx[3];
 	double			finaly[3];
@@ -150,7 +151,7 @@ void			parse_map(t_all *all);
 int				main_validator(t_all *all, char **argv, int argc);
 int				get_textures(t_all *all);
 unsigned int	get_rgba(int r, int g, int b, int a);
-unsigned int	get_rgb(mlx_texture_t *side, uint32_t y, double x);
+unsigned int	get_rgb(t_all *all, mlx_texture_t *side, double y, double x, double step_size, double scale_y);
 unsigned int	get_pixel_color(t_all *all, double scale_y, double y);
 void			start_gun(t_all *all);
 void			gun1(t_all *all, uint32_t *up, uint32_t *down, int *counter);

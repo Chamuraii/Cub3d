@@ -18,49 +18,53 @@ distance), and their position (depending on the relative angle)*/
 void ft_texture_orientation(t_all *all, double range)
 {
 	all->range = range;
-	if (all->ray_hits[all->ray_num][1] == -1)
-		all->ray_num = 0;
-	if (!all->dir)
-		all->texture_x = all->ray_hits[all->ray_num][1];
-	else
-		all->texture_x = all->ray_hits[all->ray_num][0];
-	if (!all->dir && all->ray_hits[all->ray_num][0] < all->y)
-		all->texture_x = (all->texture_x - (int) all->texture_x);
-	else if (all->dir && all->ray_hits[all->ray_num][1] > all->x)
-		all->texture_x = (all->texture_x - (int) all->texture_x);
-	else
-		all->texture_x = 1 - (all->texture_x - (int) all->texture_x);
-	all->texture_x = (all->side->width - 1) * all->texture_x;
 	if (all->ray_num >= WIDTH)
 		all->ray_num = 0;
+	if (!all->dir)
+	{
+		all->texture_x = all->ray_hits[all->ray_num][1];
+		if (all->ray_hits[all->ray_num][0] < all->y)
+			all->texture_x = all->texture_x - (int)all->texture_x;
+		else
+			all->texture_x = 1 - (all->texture_x - (int)all->texture_x);
+	}
+	else
+	{
+		all->texture_x = all->ray_hits[all->ray_num][0];
+		if (all->ray_hits[all->ray_num][1] > all->x)
+			all->texture_x = all->texture_x - (int)all->texture_x;
+		else
+			all->texture_x = 1 - (all->texture_x - (int)all->texture_x);
+	}
+	all->texture_x = (all->side->width - 1) * all->texture_x;
 }
 
-void	draw_pixel_line(t_all *all, double dist, double rad)
+void	draw_pixel_line(t_all *all, double dist)
 {
 	double		i;
 	int			start;
 	int			end;
-	int			wide;
 
-	i = 1;
-	if (dist > 1)
-		i = 1 / dist;
+	i = 1 / dist;
 	start = (HEIGHT * (1 - i)) / 2;
-	wide = -rad * WIDTH / FOV - 1;
-	if (rad == 0)
-		wide = WIDTH - 2;
-	end = HEIGHT - start;
-	start ++;
-	i = 0;
+	end = (HEIGHT * (1 + i)) / 2;
 	ft_texture_orientation(all, end - start);
+	all->texture_counter = start;
+	if (start < 0)
+		start = 0;
+	if (end > HEIGHT)
+		end = HEIGHT;
+	i = 0;
 	while (i < start)
 			mlx_put_pixel(all->background, all->ray_num, i++, all->ceiling_color);
-	while (start < end && start > 0)
-			mlx_put_pixel(all->background, wide, start++, get_pixel_color(
-					all, all->side->height / all->range, all->texture_counter++));
+	while (start < end)
+	{
+		mlx_put_pixel(all->background, all->ray_num, start, get_pixel_color(
+				all, all->side->height / all->range, start - all->texture_counter));
+		++start;
+	}
 	while (end < HEIGHT)
 			mlx_put_pixel(all->background, all->ray_num, end++, all->floor_color);
-	all->texture_counter = 0;
 }
 
 /* WHAT_SIDE : depending on the side the player is looking at and the shortest

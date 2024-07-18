@@ -15,16 +15,24 @@
 void ft_texture_orientation(t_all *all, double range)
 {
 	all->range = range;
-	if (all->ray_hits[all->ray_num][0] == -1)
+	if (all->ray_num >= WIDTH)
 		all->ray_num = 0;
 	if (!all->dir)
+	{
 		all->texture_x = all->ray_hits[all->ray_num][1];
+		if (all->ray_hits[all->ray_num][0] < all->y)
+			all->texture_x = all->texture_x - (int)all->texture_x;
+		else
+			all->texture_x = 1 - (all->texture_x - (int)all->texture_x);
+	}
 	else
+	{
 		all->texture_x = all->ray_hits[all->ray_num][0];
-	if (all->dir)
-		all->texture_x = all->texture_x - (int)all->texture_x;
-	else
-		all->texture_x = 1 - (all->texture_x - (int)all->texture_x);
+		if (all->ray_hits[all->ray_num][1] > all->x)
+			all->texture_x = all->texture_x - (int)all->texture_x;
+		else
+			all->texture_x = 1 - (all->texture_x - (int)all->texture_x);
+	}
 	all->texture_x = (all->side->width - 1) * all->texture_x;
 }
 

@@ -14,9 +14,9 @@ NAME = cub3D
 
 NAME_BONUS = cub3D_bonus
 
-CC = clang -fsanitize=address,undefined
+CC = clang
 
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -O3
 
 LIBFT = ./libft/libft.a
 
@@ -24,14 +24,6 @@ MLX = ./MLX42/libmlx42.a
 MLX_DIR = ./MLX42
 
 BREW = -I include -lglfw -L"/Users/$(USER)/.brew/opt/glfw/lib/"
-
-ifeq ($(ARCH_LINUX), yes)
-    # Arch Linux detected, include GLFW3
-    BREW = $(shell pkg-config --cflags glfw3)
-else
-    # Not Arch Linux or GLFW3 not available
-    $(info GLFW3 will not be included)
-endif
 
 SRC_DIR = src
 
@@ -85,13 +77,13 @@ all: $(NAME)
 
 $(NAME): $(LIBFT) $(MLX) $(OBJ_FILES)
 	@echo "\033[0;32mCompiling..."
-	@ $(CC) $(CFLAGS) $(OBJ_FILES) $(LIBFT) -o $(NAME) $(MLX) $(BREW)
+	@ $(CC) -lm $(CFLAGS) $(OBJ_FILES) $(LIBFT) -o $(NAME) $(MLX) $(BREW)
 
 bonus: $(NAME_BONUS)
 
 $(NAME_BONUS): $(LIBFT) $(MLX) $(OBJ_BONUS_FILES)
 	@echo "\033[0;32mBonus compiling..."
-	@ $(CC) $(shell pkg-config --libs glfw3) $(CFLAGS) $(OBJ_BONUS_FILES) $(LIBFT) -o $(NAME_BONUS) $(MLX) $(BREW)
+	@ $(CC) $(shell pkg-config --libs glfw3) -lm $(CFLAGS) $(OBJ_BONUS_FILES) $(LIBFT) -o $(NAME_BONUS) $(MLX) $(BREW)
 
 $(LIBFT):
 	@ make -C $(LIBFT_DIR) all

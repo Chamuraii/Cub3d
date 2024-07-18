@@ -22,7 +22,7 @@ void	my_key_hook(struct mlx_key_data keydata, void *param)
 		if (all->mouse_flag)
 		{
 			all->mouse_flag = 0;
-			mlx_set_cursor_mode(all->mlx, MLX_MOUSE_NORMAL);
+			mlx_set_cursor_mode(all->mlx, MLX_MOUSE_NORMAL); // Function not working
 			return ;
 		}
 		if (!all->mouse_flag)
@@ -38,7 +38,7 @@ void	mouse(t_all *all)
 	{
 		if (all->mouse_counter >= 3)
 		{
-			mlx_set_mouse_pos(all->mlx, WIDTH / 2, HEIGHT / 2);
+			mlx_set_mouse_pos(all->mlx, WIDTH / 2, HEIGHT / 2); // Function not working
 			all->mouse_counter = 0;
 		}
 		++(all->mouse_counter);
