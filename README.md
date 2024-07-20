@@ -30,12 +30,12 @@ make bonus
 To run the program:
 
 ```bash
-./cub3D map.cub
+./cub3D maps/map.cub
 ```
 To run the program with bonus:
 
 ```bash
-./cub3D_bonus map.cub
+./cub3D_bonus maps/map.cub
 ```
 
 Replace `map.cub` with the path to your map file.
