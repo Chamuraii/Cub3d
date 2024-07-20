@@ -1,4 +1,4 @@
-# Cub3D
+# CUB3D
 
 A 3D graphics project inspired by the famous Wolfenstein 3D game, developed as part of the 42 school curriculum. This project aims to create a dynamic view inside a maze using raycasting techniques.
 
