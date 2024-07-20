@@ -62,4 +62,4 @@ This project is part of the 42 school curriculum. While contributions are not ex
 
 ## License
 
-This project is licensed under the GPLv3 License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the AGPLv3 License - see the [LICENSE](LICENSE) file for details.
